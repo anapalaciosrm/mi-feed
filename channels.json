@@ -1,0 +1,83 @@
+{
+  "_help": "Edit this file to change your tabs. Each channel can be a YouTube handle like @veritasium or a channel ID starting with UC. minMinutes hides anything shorter. Save and the site rebuilds in about 2 minutes.",
+  "tabs": [
+    {
+      "id": "tech",
+      "name": "Tech",
+      "minMinutes": 5,
+      "channels": [
+        "@mkbhd",
+        "@Fireship",
+        "@Verge",
+        "@TechAltar"
+      ]
+    },
+    {
+      "id": "news",
+      "name": "News",
+      "minMinutes": 3,
+      "channels": [
+        "@aljazeeraenglish",
+        "@nytimes",
+        "@dwnews",
+        "@Vox"
+      ]
+    },
+    {
+      "id": "docs",
+      "name": "Short docs",
+      "minMinutes": 8,
+      "channels": [
+        "@DWDocumentary",
+        "@guardian",
+        "@RealStories"
+      ]
+    },
+    {
+      "id": "essays",
+      "name": "Video essays",
+      "minMinutes": 8,
+      "channels": [
+        "@Volksgeist",
+        "@johnnyharris",
+        "@Wendoverproductions",
+        "@ClimateTown",
+        "@kurzgesagt"
+      ]
+    },
+    {
+      "id": "mexico",
+      "name": "México",
+      "minMinutes": 3,
+      "channels": [
+        "@nmas",
+        "@elpais",
+        "@pictoline"
+      ]
+    },
+    {
+      "id": "discover",
+      "name": "Discover",
+      "minMinutes": 8,
+      "discover": true,
+      "channels": [
+        "@TEDEd",
+        "@veritasium",
+        "@RealEngineering",
+        "@PracticalEngineeringChannel",
+        "@PolyMatter",
+        "@NotJustBikes",
+        "@frontline",
+        "@BloombergOriginals",
+        "@VICENews",
+        "@TED",
+        "@crashcourse",
+        "@theschooloflifetv",
+        "@Asianometry",
+        "@dateunvlog",
+        "@QuantumFracture",
+        "@kurzgesagtES"
+      ]
+    }
+  ]
+}

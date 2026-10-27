@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>mi feed</title>
+  <meta name="description" content="Ana's calm video feed: chosen channels, no rabbit holes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=IBM+Plex+Mono:wght@500&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <a class="brand" href="./" aria-label="mi feed home"><span class="brand-mi">mi</span><span class="brand-feed">feed</span></a>
+      <form id="search" class="search" role="search" autocomplete="off">
+        <input id="q" type="search" placeholder="Search your feed, press Enter for all of YouTube" aria-label="Search">
+        <button type="submit">Search</button>
+      </form>
+    </div>
+    <nav id="tabs" class="tabs" aria-label="Categories"></nav>
+  </header>
+
+  <main class="wrap">
+    <div id="intro" class="intro"></div>
+    <div id="grid" class="grid" aria-live="polite"></div>
+    <div id="yt-results"></div>
+    <div class="more-wrap"><button id="more" class="ghost" hidden>Show more</button></div>
+  </main>
+
+  <footer class="wrap foot">
+    <p id="updated"></p>
+    <p><a href="https://github.com/anapalaciosrm/mi-feed/edit/main/channels.json" target="_blank" rel="noopener">Edit channels</a></p>
+    <details id="problems" hidden><summary>Channels that need a fix</summary><ul id="problem-list"></ul></details>
+  </footer>
+
+  <div id="player" class="player" hidden role="dialog" aria-modal="true" aria-labelledby="p-title">
+    <div class="player-box">
+      <div class="player-head">
+        <div class="player-meta">
+          <h2 id="p-title"></h2>
+          <p id="p-channel"></p>
+        </div>
+        <button id="close" class="ghost">Close</button>
+      </div>
+      <div class="frame"><div id="yt"></div></div>
+      <div id="done" class="done" hidden>
+        <p class="done-kicker">Finished</p>
+        <h3 id="done-title"></h3>
+        <div class="done-actions">
+          <button id="done-back">Back to my feed</button>
+          <button id="done-boost" class="ghost">More from this channel</button>
+          <label id="done-adopt-wrap" class="adopt" hidden>Keep this channel in
+            <select id="done-adopt"></select>
+          </label>
+          <span id="done-note" class="adopt"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
