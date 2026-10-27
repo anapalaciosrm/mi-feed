@@ -57,10 +57,21 @@
           <span id="done-note" class="adopt"></span>
         </div>
       </div>
+      <section id="comments" class="comments" aria-labelledby="c-head">
+        <h3 id="c-head" class="comments-head">Comments <span id="c-count"></span></h3>
+        <ol id="c-list" class="c-list"></ol>
+        <form id="c-form" class="c-form" autocomplete="off">
+          <input id="c-name" maxlength="40" placeholder="Your name" aria-label="Your name" required>
+          <textarea id="c-text" maxlength="1000" rows="2" placeholder="What did you think?" aria-label="Comment" required></textarea>
+          <button type="submit" id="c-post">Post</button>
+        </form>
+        <p id="c-status" class="c-status" role="status"></p>
+      </section>
     </div>
   </div>
 
   <script src="config.js"></script>
   <script src="app.js"></script>
+  <script type="module" src="comments.js"></script>
 </body>
 </html>

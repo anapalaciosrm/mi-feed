@@ -4,5 +4,7 @@
 window.MI_FEED = {
   apiKey: "AIzaSyAepgsXRUQtlZhbjaltkxmq3Xzj_GC7gbE",
   // Search results shorter than this many minutes are hidden (cuts out Shorts and clips).
-  minSearchMinutes: 3
+  minSearchMinutes: 3,
+  // Firebase settings for comments (safe to be public). Leave as null to hide comments.
+  firebase: null
 };
