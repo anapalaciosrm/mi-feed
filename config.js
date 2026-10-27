@@ -6,5 +6,12 @@ window.MI_FEED = {
   // Search results shorter than this many minutes are hidden (cuts out Shorts and clips).
   minSearchMinutes: 3,
   // Firebase settings for comments (safe to be public). Leave as null to hide comments.
-  firebase: null
+  firebase: {
+    apiKey: "AIzaSyBHqsSr_R8S8-NjN5klHqkb4kYJQOWw4Lw",
+    authDomain: "mi-feed-512906.firebaseapp.com",
+    projectId: "mi-feed-512906",
+    storageBucket: "mi-feed-512906.firebasestorage.app",
+    messagingSenderId: "37037381816",
+    appId: "1:37037381816:web:40ecee193cbf0f0f167c4d"
+  }
 };
