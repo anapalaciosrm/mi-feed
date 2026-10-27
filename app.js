@@ -114,7 +114,7 @@
 
   /* ---------- rendering ---------- */
   function renderTabs() {
-    const all = [...data.tabs, { id: "suggest", name: "Suggested" }, { id: "talk", name: "Conversations" }, { id: "later", name: "Watch later" }];
+    const all = [...data.tabs, { id: "suggest", name: "Watch party" }, { id: "talk", name: "Conversations" }, { id: "later", name: "Watch later" }];
     $("#tabs").innerHTML = all.map((t) => {
       const n = t.id === "later" ? later.length : t.id === "talk" ? Object.keys(counts).length : t.id === "suggest" ? suggestions.length : null;
       return `<button class="tab" role="tab" data-tab="${esc(t.id)}" aria-selected="${!query && t.id === tab}">${esc(t.name)}${n ? `<span class="count">${n}</span>` : ""}</button>`;
@@ -144,6 +144,9 @@
       ${ctx?.talk ? `<p class="last-comment"><strong>${esc(ctx.talk.name)}:</strong> ${esc(ctx.talk.text)}</p>` : ""}
       <div class="actions">
         ${counts[v.id] ? `<button class="chip talk-chip" data-act="play">${counts[v.id]} comment${counts[v.id] > 1 ? "s" : ""}</button>` : ""}
+        ${window.miComments && !ctx?.party ? (suggestions.some((s) => s.videoId === v.id)
+          ? `<button class="chip on" data-act="party" disabled>In watch party</button>`
+          : `<button class="chip" data-act="party">Add to watch party</button>`) : ""}
         ${ctx?.later ? remove : `<button class="chip${isLater ? " on" : ""}" data-act="later">${isLater ? "Saved" : "Watch later"}</button>`}
         ${!ctx?.later && !ctx?.search ? `<button class="chip" data-act="hide">Not for me</button>` : ""}
         ${extra}
@@ -173,10 +176,10 @@
     }
 
     if (tab === "suggest") {
-      intro.innerHTML = `<h1>Suggested</h1><p>Videos friends think are worth your time. Paste a YouTube link to add one.</p>`;
-      if (!window.miComments) { grid.innerHTML = `<p class="empty">Suggestions turn on with comments.</p>`; return; }
-      grid.innerHTML = suggestions.length ? suggestions.map((s) => card(suggestionVideo(s), { talk: { name: "Suggested by " + s.name, text: s.note || "" } })).join("")
-        : `<p class="empty">Nothing suggested yet. Be the first.</p>`;
+      intro.innerHTML = `<h1>Watch party</h1><p>Our shared list of things to watch together. Paste a YouTube link, or use “Add to watch party” on any video.</p>`;
+      if (!window.miComments) { grid.innerHTML = `<p class="empty">The watch party list turns on with comments.</p>`; return; }
+      grid.innerHTML = suggestions.length ? suggestions.map((s) => card(suggestionVideo(s), { party: true, talk: { name: "Added by " + s.name, text: s.note || "" } })).join("")
+        : `<p class="empty">The list is empty. Add the first video.</p>`;
       return;
     }
 
@@ -259,21 +262,12 @@
     render(); window.scrollTo({ top: 0 });
     setTimeout(() => $("#s-link").focus(), 50);
   });
-  $("#s-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const status = $("#s-status");
-    const id = videoIdFrom($("#s-link").value);
-    const name = $("#s-name").value.trim().slice(0, 40);
-    const note = $("#s-note").value.trim().slice(0, 500);
-    if (!id) { status.textContent = "That doesn’t look like a YouTube link. Copy it from the Share button on YouTube."; return; }
-    if (!name) { status.textContent = "Add your name so people know who suggested it."; return; }
+  async function addToParty(id, name, note) {
     const dup = suggestions.find((s) => s.videoId === id);
-    if (dup) { status.textContent = `${dup.name} already suggested that one.`; return; }
+    if (dup) return `${dup.name} already added that one.`;
     store.set("name", name);
-    $("#s-post").disabled = true;
-    status.textContent = "Adding…";
     const info = await lookup(id);
-    if (!info) { status.textContent = "Couldn’t find that video. It may be private or deleted."; $("#s-post").disabled = false; return; }
+    if (!info) return "Couldn’t find that video. It may be private or deleted.";
     try {
       await window.miComments.suggest({
         videoId: id, name, note,
@@ -281,11 +275,42 @@
         channel: (info.channel || "").slice(0, 100),
         duration: Math.round(info.duration || 0),
       });
-      $("#s-link").value = ""; $("#s-note").value = "";
-      status.textContent = "Added. Thanks!";
+      return null;
     } catch {
-      status.textContent = "That didn’t save. Check your connection and try again.";
+      return "That didn’t save. Check your connection and try again.";
     }
+  }
+  async function partyFromCard(v) {
+    const name = store.get("name", "");
+    if (!name) {
+      // First time: ask for a name on the Watch party tab.
+      tab = "suggest"; query = ""; $("#q").value = "";
+      render(); window.scrollTo({ top: 0 });
+      $("#s-link").value = "https://youtu.be/" + v.id;
+      $("#s-status").textContent = "Add your name, then press Add.";
+      $("#s-name").focus();
+      return;
+    }
+    const err = await addToParty(v.id, name, "");
+    if (err) alertLine(err);
+  }
+  function alertLine(text) {
+    $("#s-status").textContent = text;
+    if (tab !== "suggest") { tab = "suggest"; render(); }
+  }
+  $("#s-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const status = $("#s-status");
+    const id = videoIdFrom($("#s-link").value);
+    const name = $("#s-name").value.trim().slice(0, 40);
+    const note = $("#s-note").value.trim().slice(0, 500);
+    if (!id) { status.textContent = "That doesn’t look like a YouTube link. Copy it from the Share button on YouTube."; return; }
+    if (!name) { status.textContent = "Add your name so people know who added it."; return; }
+    $("#s-post").disabled = true;
+    status.textContent = "Adding…";
+    const err = await addToParty(id, name, note);
+    if (!err) { $("#s-link").value = ""; $("#s-note").value = ""; }
+    status.textContent = err || "Added to the watch party.";
     $("#s-post").disabled = false;
   });
 
@@ -497,6 +522,7 @@
       save(); render();
     }
     if (act === "unlater") { later = later.filter((x) => x.id !== v.id); save(); render(); }
+    if (act === "party") partyFromCard(v);
     if (act === "hide") { hidden.add(v.id); save(); render(); }
     if (act === "mute") { muted.add(v.channelId); save(); render(); }
   });
