@@ -63,6 +63,14 @@ def load(path, default):
         return default
 
 
+def api(path, **params):
+    params["key"] = API_KEY
+    data = json.loads(get("https://www.googleapis.com/youtube/v3/" + path + "?" + urllib.parse.urlencode(params), tries=3))
+    if "error" in data:
+        raise ValueError(data["error"].get("message", "API error"))
+    return data
+
+
 def resolve(entry, cache):
     entry = entry.strip()
     if CHANNEL_ID.fullmatch(entry):
@@ -70,6 +78,12 @@ def resolve(entry, cache):
     if entry in cache["handles"]:
         return cache["handles"][entry]
     handle = entry if entry.startswith("@") else "@" + entry
+    if API_KEY:
+        items = api("channels", part="id", forHandle=handle).get("items", [])
+        if not items:
+            raise ValueError("no YouTube channel with this handle")
+        cache["handles"][entry] = items[0]["id"]
+        return items[0]["id"]
     html = get("https://www.youtube.com/" + urllib.parse.quote(handle, safe="@"))
     patterns = (
         r'<link rel="canonical" href="https://www\.youtube\.com/channel/(UC[\w-]{22})"',
@@ -104,6 +118,29 @@ def read_feed(cid):
             "views": int(stats.get("views", "0") or 0) if stats is not None else None,
             "desc": " ".join(desc.split())[:240],
             "short": "/shorts/" in href,
+        })
+    return title, videos
+
+
+def read_api(cid):
+    """Newest uploads through the official API: 1 unit per channel."""
+    data = api("playlistItems", part="snippet,contentDetails", playlistId="UU" + cid[2:], maxResults=15)
+    videos, title = [], ""
+    for it in data.get("items", []):
+        sn = it["snippet"]
+        title = title or sn.get("channelTitle", "")
+        vid = it["contentDetails"].get("videoId")
+        published = it["contentDetails"].get("videoPublishedAt") or sn.get("publishedAt")
+        if not vid or sn.get("title") in ("Private video", "Deleted video") or not published:
+            continue
+        videos.append({
+            "id": vid,
+            "title": sn.get("title", ""),
+            "channelId": cid,
+            "published": published,
+            "views": None,
+            "desc": " ".join(sn.get("description", "").split())[:240],
+            "short": False,
         })
     return title, videos
 
@@ -170,7 +207,7 @@ def main():
 
     def job(cid):
         try:
-            return cid, read_feed(cid), None
+            return cid, (read_api(cid) if API_KEY else read_feed(cid)), None
         except Exception as exc:
             return cid, None, exc
 
