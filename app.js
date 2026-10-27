@@ -33,6 +33,7 @@
   let recent = [];          // latest comments across all videos
   let counts = {};          // videoId -> number of comments
   let unsubVideo = null;
+  let suggestions = [];     // videos people suggested
 
   /* ---------- helpers ---------- */
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -113,9 +114,9 @@
 
   /* ---------- rendering ---------- */
   function renderTabs() {
-    const all = [...data.tabs, { id: "talk", name: "Conversations" }, { id: "later", name: "Watch later" }];
+    const all = [...data.tabs, { id: "suggest", name: "Suggested" }, { id: "talk", name: "Conversations" }, { id: "later", name: "Watch later" }];
     $("#tabs").innerHTML = all.map((t) => {
-      const n = t.id === "later" ? later.length : t.id === "talk" ? Object.keys(counts).length : null;
+      const n = t.id === "later" ? later.length : t.id === "talk" ? Object.keys(counts).length : t.id === "suggest" ? suggestions.length : null;
       return `<button class="tab" role="tab" data-tab="${esc(t.id)}" aria-selected="${!query && t.id === tab}">${esc(t.name)}${n ? `<span class="count">${n}</span>` : ""}</button>`;
     }).join("");
   }
@@ -155,6 +156,7 @@
     const grid = $("#grid"), intro = $("#intro"), more = $("#more"), ytBox = $("#yt-results");
     ytBox.innerHTML = "";
     more.hidden = true;
+    $("#s-form").hidden = query || tab !== "suggest" || !window.miComments;
 
     if (!data.videos.length) {
       intro.innerHTML = `<h1>Your feed is getting ready</h1><p>The first update runs a couple of minutes after the site goes live. Refresh in a bit.</p>`;
@@ -167,6 +169,14 @@
       intro.innerHTML = `<h1>“${esc(query)}”</h1><p>${hits.length} in your feed${CFG.apiKey ? ". Press Enter to search all of YouTube." : "."}</p><button class="clear" data-act="clear">Back to tabs</button>`;
       grid.innerHTML = hits.length ? hits.map((v) => card(v, { search: true })).join("") : "";
       renderYt();
+      return;
+    }
+
+    if (tab === "suggest") {
+      intro.innerHTML = `<h1>Suggested</h1><p>Videos friends think are worth your time. Paste a YouTube link to add one.</p>`;
+      if (!window.miComments) { grid.innerHTML = `<p class="empty">Suggestions turn on with comments.</p>`; return; }
+      grid.innerHTML = suggestions.length ? suggestions.map((s) => card(suggestionVideo(s), { talk: { name: "Suggested by " + s.name, text: s.note || "" } })).join("")
+        : `<p class="empty">Nothing suggested yet. Be the first.</p>`;
       return;
     }
 
@@ -216,6 +226,69 @@
     box.innerHTML = `<h2 class="section-head">From all of YouTube <small>${CFG.minSearchMinutes ?? 3} min and up, no Shorts</small></h2>${body}`;
   }
 
+  /* ---------- suggestions ---------- */
+  function suggestionVideo(s) {
+    let v = byId.get(s.videoId);
+    if (!v) {
+      v = { id: s.videoId, title: s.title || "YouTube video", channel: s.channel || "", channelId: "", published: null, duration: s.duration || null };
+      byId.set(v.id, v);
+    }
+    return v;
+  }
+  function videoIdFrom(text) {
+    const t = text.trim();
+    if (/^[\w-]{11}$/.test(t)) return t;
+    const m = t.match(/(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/|\/live\/)([\w-]{11})/);
+    return m ? m[1] : null;
+  }
+  async function lookup(id) {
+    if (byId.has(id) && byId.get(id).title) {
+      const v = byId.get(id);
+      return { title: v.title, channel: chName(v), duration: v.duration || 0 };
+    }
+    if (!CFG.apiKey) return { title: "YouTube video", channel: "", duration: 0 };
+    try {
+      const r = await fetch("https://www.googleapis.com/youtube/v3/videos?" + new URLSearchParams({ part: "snippet,contentDetails", id, key: CFG.apiKey }));
+      const it = (await r.json()).items?.[0];
+      if (!it) return null;
+      return { title: it.snippet.title, channel: it.snippet.channelTitle, duration: isoSeconds(it.contentDetails.duration) || 0 };
+    } catch { return { title: "YouTube video", channel: "", duration: 0 }; }
+  }
+  $("#suggest-open").addEventListener("click", () => {
+    tab = "suggest"; store.set("tab", tab); query = ""; $("#q").value = "";
+    render(); window.scrollTo({ top: 0 });
+    setTimeout(() => $("#s-link").focus(), 50);
+  });
+  $("#s-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const status = $("#s-status");
+    const id = videoIdFrom($("#s-link").value);
+    const name = $("#s-name").value.trim().slice(0, 40);
+    const note = $("#s-note").value.trim().slice(0, 500);
+    if (!id) { status.textContent = "That doesn’t look like a YouTube link. Copy it from the Share button on YouTube."; return; }
+    if (!name) { status.textContent = "Add your name so people know who suggested it."; return; }
+    const dup = suggestions.find((s) => s.videoId === id);
+    if (dup) { status.textContent = `${dup.name} already suggested that one.`; return; }
+    store.set("name", name);
+    $("#s-post").disabled = true;
+    status.textContent = "Adding…";
+    const info = await lookup(id);
+    if (!info) { status.textContent = "Couldn’t find that video. It may be private or deleted."; $("#s-post").disabled = false; return; }
+    try {
+      await window.miComments.suggest({
+        videoId: id, name, note,
+        title: (info.title || "YouTube video").slice(0, 200),
+        channel: (info.channel || "").slice(0, 100),
+        duration: Math.round(info.duration || 0),
+      });
+      $("#s-link").value = ""; $("#s-note").value = "";
+      status.textContent = "Added. Thanks!";
+    } catch {
+      status.textContent = "That didn’t save. Check your connection and try again.";
+    }
+    $("#s-post").disabled = false;
+  });
+
   /* ---------- comments ---------- */
   function talkThreads() {
     const seen = new Map();
@@ -254,6 +327,12 @@
 
   function startComments() {
     if (!window.miComments) return;
+    $("#s-name").value = store.get("name", "");
+    window.miComments.watchSuggestions((list) => {
+      if (!list) return;
+      suggestions = list;
+      if ($("#player").hidden) render(); else renderTabs();
+    });
     window.miComments.watchRecent((list) => {
       if (!list) return;
       recent = list;
@@ -472,7 +551,7 @@
       if (d && Array.isArray(d.videos)) data = d;
       byId = new Map(data.videos.map((v) => [v.id, v]));
       for (const v of data.videos) v.channel = data.channels[v.channelId]?.title || "";
-      if (!tab || (tab !== "later" && tab !== "talk" && !data.tabs.some((t) => t.id === tab))) tab = data.tabs[0]?.id || "later";
+      if (!tab || (tab !== "later" && tab !== "talk" && tab !== "suggest" && !data.tabs.some((t) => t.id === tab))) tab = data.tabs[0]?.id || "later";
       if (data.updated) $("#updated").textContent = "Updated " + ago(data.updated);
       if (data.errors?.length) {
         $("#problems").hidden = false;

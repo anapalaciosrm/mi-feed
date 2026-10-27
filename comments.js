@@ -24,6 +24,14 @@ if (cfg && cfg.projectId) {
           (snap) => cb(toList(snap)),
           (err) => cb(null, err));
       },
+      watchSuggestions(cb) {
+        return fs.onSnapshot(fs.query(fs.collection(db, "suggestions"), fs.orderBy("createdAt", "desc"), fs.limit(150)),
+          (snap) => cb(toList(snap)),
+          (err) => cb(null, err));
+      },
+      suggest(s) {
+        return fs.addDoc(fs.collection(db, "suggestions"), { ...s, createdAt: fs.serverTimestamp() });
+      },
       add(c) {
         return fs.addDoc(col, { ...c, createdAt: fs.serverTimestamp() });
       },

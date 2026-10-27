@@ -171,6 +171,15 @@ button { cursor: pointer; }
 .adopt { display: flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); }
 .adopt select { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
 
+/* Suggestions */
+.suggest-open { flex: none; }
+.s-form { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 2fr) auto; gap: 8px; margin-bottom: 26px; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.s-form input { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; min-width: 0; }
+.s-form button { background: var(--accent); color: var(--on-accent); border: 0; border-radius: 999px; padding: 9px 18px; font-weight: 700; }
+.s-form button:disabled { opacity: .6; }
+.s-form .c-status { grid-column: 1 / -1; }
+@media (max-width: 760px) { .s-form { grid-template-columns: 1fr; } }
+
 /* Comments */
 .comments { background: var(--surface); border-radius: var(--radius); padding: 18px 20px; display: flex; flex-direction: column; gap: 12px; }
 .comments-head { margin: 0; font: 800 17px/1.2 var(--f-display); }

@@ -18,12 +18,20 @@
         <input id="q" type="search" placeholder="Search your feed, press Enter for all of YouTube" aria-label="Search">
         <button type="submit">Search</button>
       </form>
+      <button id="suggest-open" class="ghost suggest-open" type="button">Suggest a video</button>
     </div>
     <nav id="tabs" class="tabs" aria-label="Categories"></nav>
   </header>
 
   <main class="wrap">
     <div id="intro" class="intro"></div>
+    <form id="s-form" class="s-form" autocomplete="off" hidden>
+      <input id="s-link" placeholder="Paste a YouTube link" aria-label="YouTube link" required>
+      <input id="s-name" maxlength="40" placeholder="Your name" aria-label="Your name" required>
+      <input id="s-note" maxlength="500" placeholder="Why it’s worth watching (optional)" aria-label="Note">
+      <button type="submit" id="s-post">Suggest</button>
+      <p id="s-status" class="c-status" role="status"></p>
+    </form>
     <div id="grid" class="grid" aria-live="polite"></div>
     <div id="yt-results"></div>
     <div class="more-wrap"><button id="more" class="ghost" hidden>Show more</button></div>
