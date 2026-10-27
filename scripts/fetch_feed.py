@@ -6,8 +6,11 @@ come from the YouTube API when YT_API_KEY is set, otherwise from the watch page.
 """
 import json
 import os
+import random
 import re
 import sys
+import time
+import urllib.error
 import datetime as dt
 import urllib.parse
 import urllib.request
@@ -30,14 +33,26 @@ NS = {
 CHANNEL_ID = re.compile(r"UC[\w-]{22}")
 
 
-def get(url, timeout=25):
-    req = urllib.request.Request(url, headers={
-        "User-Agent": UA,
-        "Accept-Language": "en-US,en;q=0.8",
-        "Cookie": "CONSENT=YES+1; SOCS=CAI",
-    })
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read().decode("utf-8", "replace")
+def get(url, timeout=25, tries=5):
+    # YouTube's feeds randomly answer 404 or 5xx to cloud servers; trying again usually works.
+    last = None
+    for attempt in range(tries):
+        req = urllib.request.Request(url, headers={
+            "User-Agent": UA,
+            "Accept-Language": "en-US,en;q=0.8",
+            "Cookie": "CONSENT=YES+1; SOCS=CAI",
+        })
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read().decode("utf-8", "replace")
+        except urllib.error.HTTPError as exc:
+            last = exc
+            if exc.code not in (404, 429, 500, 502, 503):
+                raise
+        except (urllib.error.URLError, TimeoutError) as exc:
+            last = exc
+        time.sleep(1.5 * (attempt + 1) + random.random())
+    raise last
 
 
 def load(path, default):
@@ -148,6 +163,7 @@ def main():
             "channelIds": ids,
         })
 
+    previous = load(OUT, {})
     channels = {}
     videos = []
     unique = list(dict.fromkeys(cid for t in tabs_out for cid in t["channelIds"]))
@@ -158,11 +174,15 @@ def main():
         except Exception as exc:
             return cid, None, exc
 
-    with ThreadPoolExecutor(8) as pool:
+    with ThreadPoolExecutor(3) as pool:
         for cid, result, exc in pool.map(job, unique):
             if exc:
                 errors.append(f"{handle_of.get(cid, cid)}: feed failed ({exc})")
                 print(f"::warning::feed {handle_of.get(cid, cid)}: {exc}")
+                old = [v for v in previous.get("videos", []) if v["channelId"] == cid]
+                if old:
+                    channels[cid] = previous.get("channels", {}).get(cid, {"title": "", "handle": handle_of.get(cid, "")})
+                    videos.extend(dict(v, short=False) for v in old)
                 continue
             title, vids = result
             channels[cid] = {"title": title, "handle": handle_of.get(cid, "")}
