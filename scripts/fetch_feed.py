@@ -139,7 +139,7 @@ def main():
                 handle_of.setdefault(cid, entry)
             except Exception as exc:
                 errors.append(f"{entry}: {exc}")
-                print(f"! {entry}: {exc}")
+                print(f"::warning::{entry}: {exc}")
         tabs_out.append({
             "id": tab["id"],
             "name": tab["name"],
@@ -162,14 +162,15 @@ def main():
         for cid, result, exc in pool.map(job, unique):
             if exc:
                 errors.append(f"{handle_of.get(cid, cid)}: feed failed ({exc})")
-                print(f"! feed {cid}: {exc}")
+                print(f"::warning::feed {handle_of.get(cid, cid)}: {exc}")
                 continue
             title, vids = result
             channels[cid] = {"title": title, "handle": handle_of.get(cid, "")}
             videos.extend(vids)
 
     if not videos:
-        sys.exit("No videos fetched; keeping the previous feed.")
+        print("::error::No videos fetched; keeping the previous feed.")
+        sys.exit(1)
 
     cutoff = dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=MAX_AGE_DAYS)
     videos = [v for v in videos if not v["short"]
@@ -214,7 +215,7 @@ def main():
         }, f, ensure_ascii=False, separators=(",", ":"))
     with open(CACHE, "w", encoding="utf-8") as f:
         json.dump(cache, f, ensure_ascii=False, indent=1, sort_keys=True)
-    print(f"Wrote {len(kept)} videos from {len(channels)} channels, {len(errors)} problems")
+    print(f"::notice::Wrote {len(kept)} videos from {len(channels)} channels, {len(errors)} problems")
 
 
 if __name__ == "__main__":
