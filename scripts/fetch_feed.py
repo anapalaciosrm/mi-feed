@@ -77,6 +77,16 @@ def resolve(entry, cache):
         return entry
     if entry in cache["handles"]:
         return cache["handles"][entry]
+    if entry.lower().startswith("search:"):
+        if not API_KEY:
+            raise ValueError("name search needs the YT_API_KEY secret")
+        items = api("search", part="snippet", type="channel", maxResults=1, q=entry[7:].strip()).get("items", [])
+        if not items:
+            raise ValueError("no channel matched that name")
+        cid = items[0]["snippet"]["channelId"]
+        print(f"::notice::{entry} matched {items[0]['snippet']['channelTitle']} ({cid})")
+        cache["handles"][entry] = cid
+        return cid
     handle = entry if entry.startswith("@") else "@" + entry
     if API_KEY:
         items = api("channels", part="id", forHandle=handle).get("items", [])

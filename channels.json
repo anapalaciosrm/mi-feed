@@ -1,5 +1,5 @@
 {
-  "_help": "Edit this file to change your tabs. Each channel can be a YouTube handle like @veritasium or a channel ID starting with UC. minMinutes hides anything shorter. Save and the site rebuilds in about 2 minutes.",
+  "_help": "Edit this file to change your tabs. Each channel can be a YouTube handle like @veritasium or a channel ID starting with UC, or search:Channel Name to match by name. minMinutes hides anything shorter. Save and the site rebuilds in about 2 minutes.",
   "tabs": [
     {
       "id": "tech",
@@ -8,7 +8,7 @@
       "channels": [
         "@mkbhd",
         "@Fireship",
-        "@Verge",
+        "search:The Verge",
         "@TechAltar"
       ]
     },
@@ -29,7 +29,7 @@
       "minMinutes": 8,
       "channels": [
         "@DWDocumentary",
-        "@guardian",
+        "@theguardian",
         "@RealStories"
       ]
     },
@@ -52,7 +52,7 @@
       "channels": [
         "@nmas",
         "@elpais",
-        "@pictoline"
+        "search:Pictoline"
       ]
     },
     {
@@ -76,7 +76,7 @@
         "@Asianometry",
         "@dateunvlog",
         "@QuantumFracture",
-        "@kurzgesagtES"
+        "search:Kurzgesagt en Español"
       ]
     }
   ]
