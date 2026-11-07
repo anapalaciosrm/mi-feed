@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Part 107 Study · Ana</title>
+<meta name="description" content="Flashcards, practice test and chart drills for the FAA Part 107 UAG knowledge test.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <h1>Part 107 Study</h1>
+    <p class="sub">FAA Unmanned Aircraft General, Small (UAG) · <span id="countdown"></span></p>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button data-tab="cards" class="on">Flashcards</button>
+    <button data-tab="test">Practice test</button>
+    <button data-tab="chart">Chart lab</button>
+    <button data-tab="diagrams">Diagrams</button>
+    <button data-tab="cheat">Cheat sheet</button>
+    <button data-tab="plan">Plan & test day</button>
+    <button data-tab="links">Links</button>
+  </nav>
+</header>
+
+<main>
+<!-- FLASHCARDS -->
+<section id="tab-cards" class="tab on">
+  <div class="filters" id="areaFilters"></div>
+  <div class="statsbar"><span id="cardStats"></span><label class="tog"><input type="checkbox" id="weakOnly"> Only cards I missed</label><button class="ghost" id="resetCards">Reset progress</button></div>
+  <div class="card-wrap">
+    <div class="flash" id="flash" tabindex="0" aria-live="polite">
+      <div class="tag" id="flashTag"></div>
+      <div class="face" id="flashFront"></div>
+      <div class="face back" id="flashBack" hidden></div>
+      <div class="diagram-slot" id="flashDiagram" hidden></div>
+      <div class="hint" id="flashHint">Tap to flip</div>
+    </div>
+    <div class="actions">
+      <button class="bad" id="againBtn">✗ Again</button>
+      <button class="good" id="gotBtn">✓ Got it</button>
+    </div>
+    <p class="small center">Keyboard: space flips, ← again, → got it. Missed cards come back sooner. Progress is saved in this browser.</p>
+  </div>
+</section>
+
+<!-- PRACTICE TEST -->
+<section id="tab-test" class="tab">
+  <div id="testStart" class="panel">
+    <h2>Practice test</h2>
+    <p>The real test has 60 questions with 3 choices each, 2 hours, and you need 70% (42 right). Aim for 85% or more here before Monday.</p>
+    <div class="row">
+      <button class="primary" data-start="full">Full mock: 60 questions, 2 hour timer</button>
+      <button data-start="quick">Quick 15</button>
+      <button data-start="weak">Redo my misses</button>
+    </div>
+    <label class="tog"><input type="checkbox" id="instant"> Show the answer right after each question (study mode)</label>
+    <div id="testHistory" class="small"></div>
+  </div>
+  <div id="testRun" class="panel" hidden>
+    <div class="testhead"><span id="qCount"></span><span id="timer"></span></div>
+    <div class="tag" id="qArea"></div>
+    <h3 id="qText"></h3>
+    <div id="qOpts" class="opts"></div>
+    <div id="qExplain" class="explain" hidden></div>
+    <div class="row">
+      <button id="prevQ">← Back</button>
+      <button class="primary" id="nextQ">Next →</button>
+      <button class="ghost" id="finishQ">Finish & grade</button>
+    </div>
+  </div>
+  <div id="testResult" class="panel" hidden></div>
+</section>
+
+<!-- CHART LAB -->
+<section id="tab-chart" class="tab">
+  <div class="panel">
+    <h2>Chart lab</h2>
+    <p><b>Why this matters:</b> since October 26, 2026 the UAG test shows images of <b>current</b> sectional charts on screen, in addition to the printed testing supplement. Expect a handful of chart questions on airspace, airport data, frequencies and obstacles.</p>
+    <h3>1. Practice map</h3>
+    <div class="figure" id="chartLabSvg"></div>
+    <ol class="labqs" id="labQs"></ol>
+    <h3>2. Real chart drill: your own backyard</h3>
+    <p>Open the real San Francisco sectional on <a href="https://skyvector.com/airport/PAO" target="_blank" rel="noopener">SkyVector at Palo Alto (PAO)</a>, zoom in, and answer:</p>
+    <ol class="labqs">
+      <li><details><summary>What color is the Palo Alto airport symbol, and what does that tell you?</summary>Blue: it has a control tower, so it sits in Class D (dashed blue). Read its Class D ceiling in the box; look for a minus sign, since SFO's Class B sits above.</details></li>
+      <li><details><summary>Find SFO. What line style surrounds it, and what does "100/SFC" on the inner ring mean?</summary>Solid blue = Class B. 100/SFC = surface up to 10,000 ft MSL. Each outer ring has its own floor, e.g. 30 = 3,000 ft MSL.</details></li>
+      <li><details><summary>Find San Jose (SJC). What class is it?</summary>Solid magenta rings = Class C. Read the inner (xx/SFC) and outer (xx/12 style) labels.</details></li>
+      <li><details><summary>Find Moffett (NUQ). Can you fly a drone at the Stanford campus edge near it without authorization?</summary>Moffett is a blue, towered airport in Class D. If your spot is inside the dashed blue line (or under Class B/C floors that reach the surface), you need LAANC authorization. Check the LAANC grid in a LAANC app for allowed altitudes.</details></li>
+      <li><details><summary>Find Half Moon Bay (HAF) on the coast. Towered or not? Where is its CTAF?</summary>Magenta symbol = non-towered. CTAF is the frequency followed by Ⓒ in its data block.</details></li>
+      <li><details><summary>Pick any obstacle near the bay. Find its MSL and AGL heights and work out the ground elevation.</summary>Bold number = MSL top; number in parentheses = AGL. Ground = MSL − AGL.</details></li>
+    </ol>
+    <h3>3. Official FAA figures</h3>
+    <p>The FAA's own sample questions use figures from the testing supplement FAA-CT-8080-2H (Figures 20 to 26 are sectional excerpts). You'll get the printed booklet at the test center. See them with answers on <a href="https://rotatepilot.com/faa-questions/drone" target="_blank" rel="noopener">this page of the 40 FAA sample questions with figures</a>, or open the full <a href="https://online.prepware.com/ct8080" target="_blank" rel="noopener">supplement PDF</a>.</p>
+  </div>
+</section>
+
+<!-- DIAGRAMS -->
+<section id="tab-diagrams" class="tab">
+  <div id="diagramList"></div>
+</section>
+
+<!-- CHEAT SHEET -->
+<section id="tab-cheat" class="tab">
+  <div class="panel cheat">
+    <h2>Cheat sheet: numbers to know cold</h2>
+    <div class="grid2">
+      <div>
+        <h3>Limits (107.51 etc.)</h3>
+        <table class="tbl">
+          <tr><td>Weight</td><td><b>&lt; 55 lb</b> incl. payload</td></tr>
+          <tr><td>Altitude</td><td><b>400 ft AGL</b> (or 400 ft above a structure within 400 ft of it)</td></tr>
+          <tr><td>Speed</td><td><b>87 kt / 100 mph</b></td></tr>
+          <tr><td>Visibility</td><td><b>3 SM</b></td></tr>
+          <tr><td>Clouds</td><td><b>500 ft below, 2,000 ft horizontal</b></td></tr>
+          <tr><td>Drones per pilot</td><td><b>1</b></td></tr>
+          <tr><td>Night/twilight lights</td><td>anti-collision visible <b>3 SM</b></td></tr>
+          <tr><td>Civil twilight</td><td><b>30 min</b> before sunrise / after sunset</td></tr>
+        </table>
+        <h3>People & paperwork</h3>
+        <table class="tbl">
+          <tr><td>Certificate age</td><td><b>16</b> (test at 14)</td></tr>
+          <tr><td>Recurrent training</td><td>every <b>24 calendar months</b>, free online</td></tr>
+          <tr><td>Accident report</td><td><b>10 days</b>: serious injury, loss of consciousness, or <b>&gt;$500</b> damage to other property</td></tr>
+          <tr><td>Address change</td><td><b>30 days</b></td></tr>
+          <tr><td>Alcohol</td><td><b>8 hours</b>, BAC <b>&lt; 0.04</b></td></tr>
+          <tr><td>Registration</td><td>all Part 107 drones, <b>3 years</b>, number on outside</td></tr>
+          <tr><td>Emergency deviation</td><td>allowed; report <b>if FAA asks</b></td></tr>
+          <tr><td>Waivers</td><td>FAADroneZone; never for hazmat</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>Airspace</h3>
+        <table class="tbl">
+          <tr><td style="color:#1f5fbf"><b>B</b> solid blue</td><td>needs authorization</td></tr>
+          <tr><td style="color:#b0287f"><b>C</b> solid magenta</td><td>needs authorization</td></tr>
+          <tr><td style="color:#1f5fbf"><b>D</b> dashed blue</td><td>needs authorization</td></tr>
+          <tr><td style="color:#b0287f"><b>E surface</b> dashed magenta</td><td>needs authorization</td></tr>
+          <tr><td style="color:#b0287f">Magenta vignette</td><td>E from 700 AGL</td></tr>
+          <tr><td style="color:#1f5fbf">Blue vignette</td><td>E from 1,200 AGL</td></tr>
+          <tr><td><b>G</b></td><td>no authorization</td></tr>
+          <tr><td>Labels</td><td>hundreds of ft MSL: 70/20 = 7,000/2,000</td></tr>
+          <tr><td>[-25]</td><td>up to but not incl. 2,500 MSL</td></tr>
+          <tr><td>Obstacle</td><td>bold MSL, (AGL)</td></tr>
+          <tr><td>Airport</td><td>blue = tower, magenta = none, Ⓒ = CTAF</td></tr>
+          <tr><td>VR1234 / VR123</td><td>4 digits ≤ 1,500 AGL; 3 digits above</td></tr>
+          <tr><td>Stadium TFR</td><td>3 NM, 3,000 AGL, 1 hr before/after</td></tr>
+        </table>
+        <h3>Weather & performance</h3>
+        <table class="tbl">
+          <tr><td>METAR wind</td><td>TRUE, FROM. 18004KT = from 180° at 4 kt</td></tr>
+          <tr><td>Clouds</td><td>FEW 1-2/8, SCT 3-4/8, BKN 5-7/8, OVC 8/8; ×100 ft AGL</td></tr>
+          <tr><td>Ceiling</td><td>lowest BKN, OVC or VV</td></tr>
+          <tr><td>Standard day</td><td>15°C, 29.92 inHg</td></tr>
+          <tr><td>Density altitude ↑</td><td>high, hot, humid → less performance</td></tr>
+          <tr><td>Stable</td><td>smooth, stratus, steady rain, poor vis</td></tr>
+          <tr><td>Unstable</td><td>cumulus, turbulence, showers, good vis</td></tr>
+          <tr><td>Thunderstorm</td><td>cumulus → mature (worst) → dissipating</td></tr>
+          <tr><td>Load factor</td><td>30° 1.15G · 45° 1.41G · <b>60° 2G</b></td></tr>
+        </table>
+      </div>
+    </div>
+    <h3>Hazardous attitudes</h3>
+    <table class="tbl">
+      <tr><th>Attitude</th><th>Sounds like</th><th>Antidote</th></tr>
+      <tr><td>Anti-authority</td><td>"Don't tell me"</td><td>Follow the rules</td></tr>
+      <tr><td>Impulsivity</td><td>"Do it quickly"</td><td>Not so fast, think first</td></tr>
+      <tr><td>Invulnerability</td><td>"It won't happen to me"</td><td>It could happen to me</td></tr>
+      <tr><td>Macho</td><td>"I can do it"</td><td>Taking chances is foolish</td></tr>
+      <tr><td>Resignation</td><td>"What's the use?"</td><td>I'm not helpless</td></tr>
+    </table>
+    <p class="small">Checklists: IMSAFE (you), PAVE (risk), DECIDE and 3P (decisions). CRM: all phases. Scan: 10° segments about 1 second each. Dark adaptation about 30 min.</p>
+  </div>
+</section>
+
+<!-- PLAN -->
+<section id="tab-plan" class="tab">
+  <div class="panel">
+    <h2>Three day plan</h2>
+    <p class="small">The test leans heavily on Regulations, Operations and Airspace. One source citing the PSI bulletin gives the split as Regulations 48%, Operations 25%, Airspace 20%, Weather 5%, Loading 2%. Older guides show a more even split, so cover everything but put your time where the points are.</p>
+    <ol class="plan">
+      <li><b>Fri Nov 6 (tonight, 45 min):</b> Flashcards: Regulations. Read the Cheat sheet once.</li>
+      <li><b>Sat Nov 7 (2 to 3 hrs):</b> Flashcards: Airspace & Charts and Operations. Do the Chart lab practice map. Quick 15 test twice. Read the Diagrams tab.</li>
+      <li><b>Sun Nov 8 (2 to 3 hrs):</b> Flashcards: Weather and Loading. Real chart drill on SkyVector. Full 60 question mock under the timer. Then "Redo my misses". Go through the 40 FAA sample questions with figures. <i>Last chance to cancel or reschedule for a refund: 7:30 PM Sunday.</i></li>
+      <li><b>Mon Nov 9 (day of):</b> Morning: one more full mock. Afternoon: only "cards I missed" and the Cheat sheet. Stop studying by 5:30 PM, eat, hydrate.</li>
+    </ol>
+    <p>Ready signal: <b>85% or more on two full mocks</b>.</p>
+
+    <h2>Test day checklist (Mon Nov 9)</h2>
+    <ul class="check">
+      <li><label><input type="checkbox"> Arrive by <b>7:15 PM</b> at PSI Santa Clara, 2936 Scott Blvd, Santa Clara, CA 95054 (test at 7:30, 150 min appointment)</label></li>
+      <li><label><input type="checkbox"> Valid government photo ID with <b>photo, date of birth, signature and residential address</b>. If one ID doesn't have all four, sort it out before Monday (call PSI at 844‑704‑1487). Foreign applicants need a <b>passport plus a second government photo ID</b>.</label></li>
+      <li><label><input type="checkbox"> Know your <b>FTN</b> (FAA Tracking Number) from IACRA</label></li>
+      <li><label><input type="checkbox"> Optional: basic non-programmable calculator (the proctor inspects it)</label></li>
+      <li><label><input type="checkbox"> Leave phone, watch, bag, jacket, notes and pens in the car. They give you scratch materials and the testing supplement.</label></li>
+      <li><label><input type="checkbox"> Bathroom before check-in; there are no breaks. Come alone (no waiting room).</label></li>
+      <li><label><input type="checkbox"> Arriving late may mean losing the full fee.</label></li>
+    </ul>
+
+    <h2>During the test</h2>
+    <ul>
+      <li>About 2 minutes per question; you'll have extra time. Flag hard ones and come back.</li>
+      <li>Read every word. "MSL" vs "AGL" and "true" vs "magnetic" are the classic traps.</li>
+      <li>For chart questions: find the point, identify the line color and style, then read the numbers. Subtract ground elevation when converting MSL to AGL.</li>
+      <li>Three choices: if unsure, eliminate the one that is clearly wrong, then pick the safer or more regulation-based answer.</li>
+    </ul>
+
+    <h2>After you pass</h2>
+    <ol>
+      <li>Keep your Airman Knowledge Test Report (AKTR). It has your 17-digit Knowledge Test Exam ID.</li>
+      <li>Log into <a href="https://iacra.faa.gov" target="_blank" rel="noopener">IACRA</a>, start an application for Pilot → Remote Pilot (Form 8710‑13), enter the Exam ID, sign and submit.</li>
+      <li>TSA does a security check. Then you get an email to print a <b>temporary certificate</b>; the plastic card comes by mail.</li>
+      <li>Register your drone under Part 107 on <a href="https://faadronezone-access.faa.gov/" target="_blank" rel="noopener">FAADroneZone</a> and put the number on the outside.</li>
+      <li>Set a reminder for recurrent training in 24 calendar months.</li>
+    </ol>
+    <p class="small">If you don't pass: the report lists missed ACS codes. You can retake after a 14 day wait, bringing the failed AKTR as your retest authorization.</p>
+  </div>
+</section>
+
+<!-- LINKS -->
+<section id="tab-links" class="tab">
+  <div class="panel">
+    <h2>Official and useful links</h2>
+    <h3>Practice questions</h3>
+    <ul class="links">
+      <li><a href="https://www.faa.gov/sites/faa.gov/files/training_testing/testing/test_questions/uag_questions.pdf" target="_blank" rel="noopener">FAA UAG sample questions (PDF)</a>: the official 40 sample questions</li>
+      <li><a href="https://rotatepilot.com/faa-questions/drone" target="_blank" rel="noopener">The same 40 FAA questions with figures and explanations</a> (third-party site)</li>
+      <li><a href="https://www.psionlinestore.com/pages.php?pageid=42" target="_blank" rel="noopener">PSI True Talent practice test</a>: from the company that runs your test</li>
+      <li><a href="https://www.kingschools.com/free-faa-exam/drone-pilot" target="_blank" rel="noopener">King Schools free drone practice test</a></li>
+    </ul>
+    <h3>Charts and figures</h3>
+    <ul class="links">
+      <li><a href="https://online.prepware.com/ct8080" target="_blank" rel="noopener">Testing supplement FAA-CT-8080-2H (PDF)</a>: the booklet you'll get at the test center</li>
+      <li><a href="https://skyvector.com/airport/PAO" target="_blank" rel="noopener">SkyVector: live sectional at Palo Alto</a></li>
+      <li><a href="https://vfrmap.com/" target="_blank" rel="noopener">VFRMap: another free sectional viewer</a></li>
+      <li><a href="https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/vfr/" target="_blank" rel="noopener">FAA VFR chart downloads</a> (includes the chart legend)</li>
+    </ul>
+    <h3>Rules and test info</h3>
+    <ul class="links">
+      <li><a href="https://www.ecfr.gov/current/title-14/chapter-I/subchapter-F/part-107" target="_blank" rel="noopener">14 CFR Part 107 (full text)</a></li>
+      <li><a href="https://www.faa.gov/uas/commercial_operators/become_a_drone_pilot" target="_blank" rel="noopener">FAA: Become a certificated remote pilot</a></li>
+      <li><a href="https://www.faa.gov/training_testing/testing/acs" target="_blank" rel="noopener">FAA Airman Certification Standards</a> (Remote Pilot ACS, FAA-S-ACS-10B)</li>
+      <li><a href="https://www.faa.gov/training_testing/testing/media/testing_matrix.pdf" target="_blank" rel="noopener">FAA Airman Knowledge Testing Matrix</a> (ID rules)</li>
+      <li><a href="https://www.faa.gov/training_testing/testing/September_2026_Special_Edition.pdf" target="_blank" rel="noopener">FAA testing advisory, Sept 2026</a> (new chart image questions from Oct 26, 2026)</li>
+    </ul>
+    <h3>Weather</h3>
+    <ul class="links">
+      <li><a href="https://aviationweather.gov/" target="_blank" rel="noopener">aviationweather.gov</a>: decode a real METAR for KSFO or KPAO to practice</li>
+      <li><a href="https://www.1800wxbrief.com/" target="_blank" rel="noopener">1800wxbrief.com</a>: Flight Service briefings</li>
+    </ul>
+    <h3>After the test</h3>
+    <ul class="links">
+      <li><a href="https://iacra.faa.gov" target="_blank" rel="noopener">IACRA</a> · <a href="https://faadronezone-access.faa.gov/" target="_blank" rel="noopener">FAADroneZone</a> · <a href="https://www.faasafety.gov/" target="_blank" rel="noopener">FAASafety.gov</a> (recurrent training)</li>
+    </ul>
+    <p class="small">Diagrams on this site are simplified drawings for study, not official FAA charts. Rules checked November 2026.</p>
+  </div>
+</section>
+</main>
+
+<script src="cards.js"></script>
+<script src="questions.js"></script>
+<script src="diagrams.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
