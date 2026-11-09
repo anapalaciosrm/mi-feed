@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Part 107 · Hardest 40</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1b1d22;--muted:#646a73;--line:#e2e0d9;--good:#1e8a4c;--bad:#c0392b;--accent:#1f5fbf}
+@media (prefers-color-scheme:dark){:root{--bg:#121417;--card:#1b1e23;--ink:#e9eaec;--muted:#9aa1ab;--line:#2b3038;--accent:#6ea3ff}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px 14px 80px}
+h1{font-size:1.3rem;margin:.2rem 0}
+.sub{color:var(--muted);font-size:.9rem;margin:0 0 12px}
+.clock{position:sticky;top:0;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px;font-size:.95rem;z-index:2}
+.qb{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:0 0 12px}
+.qb.ok{border-color:var(--good)}.qb.bad{border-color:var(--bad)}.qb.miss{border-color:#c98a0b}
+.qt{margin:0 0 8px}.qn{color:var(--muted);font-size:.85rem;margin-right:6px}
+label{display:flex;gap:8px;align-items:flex-start;padding:5px 0;cursor:pointer}
+label input{margin-top:5px}
+.ex{font-size:.9rem;margin:8px 0 0;display:none}
+button{font:inherit;padding:12px 18px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.sec{background:none;color:var(--accent)}
+#err{color:var(--bad);font-size:.9rem;margin-left:8px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.stat b{display:block;font-size:1.4rem}
+textarea{width:100%;min-height:160px;font:13px/1.4 ui-monospace,monospace;margin-top:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px;box-sizing:border-box}
+</style>
+</head>
+<body>
+<main>
+<h1>Part 107 · Hardest 40</h1>
+<p class="sub">From 14 CFR 107 and the Remote Pilot ACS. Take at least 45 minutes and do a second pass before grading. <a href="./">Back to study site</a></p>
+<div class="clock">⏱ Time elapsed: <b id="clk">0:00</b> of 2:00:00</div>
+<div id="qs"></div>
+<p><button id="grade">Grade my test</button><span id="err"></span></p>
+<div id="res"></div>
+</main>
+<script>
+const Q0=[
+["Which statement about wind direction is correct?",["METAR winds are magnetic; tower winds are true","METAR winds are true; tower and ATIS winds are magnetic","Both are true"],1,"Written = true. Spoken = magnetic."],
+["An ASOS voice broadcast you hear on the radio reports wind 220 at 7. That direction is:",["True","Magnetic","Grid"],1,"Spoken broadcasts (ATIS, ASOS, AWOS voice) are magnetic."],
+["Where no airspace is charted, Class E begins at ___ and ends at ___:",["1,200 AGL / 14,500 MSL","14,500 MSL / 18,000 MSL (not incl.)","18,000 MSL / FL600"],1,"14,500: G ends, E begins. 18,000: E ends, A begins."],
+["Where nothing is charted, Class G extends up to:",["14,500 ft MSL","18,000 ft MSL","10,000 ft MSL"],0,"Then Class E above."],
+["Ordered by typical top, lowest to highest:",["D, C, B, A","C, D, B, A","B, C, D, A"],0,"2,500 / 4,000 / 10,000 / 18,000."],
+["The 20 NM outer area around a Class C airport is:",["Part of Class C; authorization needed","Not Class C; ATC services are offered to manned aircraft","A restricted area"],1,"Only the core and shelf are Class C."],
+["On a chart, a box reading 'CTC SAVANNAH APP WITHIN 20 NM ON 118.4' tells manned pilots:",["How to contact approach in the Class C outer area","That drones are banned within 20 NM","The tower frequency for the Class D"],0,"It's info for the 20 NM outer area."],
+["Inside a Class C core labeled 41/SFC, at 10 ft AGL you need:",["Nothing","ATC authorization","A waiver"],1,"SFC = ground."],
+["Under a Class C shelf labeled 41/13, the ground is 40 ft MSL and you fly at 400 ft AGL. You are:",["Inside Class C","Below the shelf, not in Class C","In Class B"],1,"40 + 400 = 440 MSL, below 1,300."],
+["Directly above a Class C ceiling of 41, you are in:",["Class A","Class E","Class G"],1,"Class E fills the space above until 18,000."],
+["Before flying in an active MOA, you are required to:",["Get military permission","Get a waiver","Nothing is required, but use extreme caution"],2,"MOAs aren't prohibited or permission-based."],
+["Before flying in an active Restricted Area, you need:",["Nothing","Permission from the using or controlling agency","A waiver only"],1,"14 CFR 107.45."],
+["A Warning Area is:",["Over international waters from 3 NM offshore; use caution","Over cities; always prohibited","Inside Class B"],0,"Similar hazards to a restricted area, but offshore."],
+["Flight in a Prohibited Area like P-56 is:",["Allowed with LAANC","Never allowed","Allowed below 200 ft"],1,"Never."],
+["A Part 107 drone may operate with its ATC transponder on:",["Always","Only if authorized by the FAA","Only near airports"],1,"Prohibited unless authorized (107.52)."],
+["A Part 107 drone may transmit ADS-B Out:",["Only if authorized by the FAA","Always, for safety","Only in Class G"],0,"Prohibited unless authorized (107.53)."],
+["Instead of transponders or ADS-B, drones are identified mainly through:",["Remote ID","A flight plan","Radio calls to the tower"],0,"Part 89 Remote ID."],
+["A stadium TFR for a qualifying event covers:",["3 NM, 3,000 ft AGL, 1 hour before to 1 hour after","5 NM, 5,000 ft, 2 hours","1 NM, 1,000 ft, during the game"],0,"3, 3, 1 and 1."],
+["The Mode C veil is a ___ NM ring around a Class B airport:",["10","20","30"],2,"30 NM."],
+["Victor airways are Class E from ___ AGL and ___ NM each side:",["700 / 2","1,200 / 4","1,200 / 10"],1,"1,200 AGL, 4 NM."],
+["A Class B shelf is labeled 80/35. Ground 3,200 ft MSL, drone at 280 ft AGL. You are:",["Inside Class B","Below the shelf","In Class A"],1,"3,200 + 280 = 3,480, below 3,500."],
+["A Class C shelf is labeled 50/27. Ground 2,350 ft MSL, drone at 380 ft AGL. You are:",["Below the shelf","Inside Class C","In Class G"],1,"2,350 + 380 = 2,730, above 2,700."],
+["An obstacle is charted 2312 (1049). Within 400 ft of it, Part 107 lets you fly up to:",["1,449 ft AGL","2,712 ft AGL","400 ft AGL"],0,"1,049 + 400, in AGL."],
+["Standard temperature at 6,000 ft is about:",["9 C","3 C","-3 C"],1,"15 minus 12."],
+["Temperature 20 C, dewpoint 14 C. Estimated cloud base:",["About 2,400 ft AGL","About 6,000 ft AGL","About 1,400 ft AGL"],0,"6 divided by 2.5 = 2.4."],
+["METAR: BKN007. Respecting cloud clearance, the highest you can fly is about:",["200 ft AGL","400 ft AGL","700 ft AGL"],0,"700 minus 500."],
+["A 32 lb drone in a level 45 degree bank must support about:",["37 lb","45 lb","64 lb"],1,"32 x 1.41."],
+["A 28 lb drone in a level 60 degree bank must support about:",["32 lb","40 lb","56 lb"],2,"28 x 2."],
+["Eight hours after drinking, your blood alcohol is 0.039%. Can you fly?",["Yes, both rules are met","No, it must be 0.00%","No, it must be 12 hours"],0,"8 hours AND under 0.04%: both met."],
+["Which must be reported to the FAA without being asked?",["An emergency deviation","An accident with serious injury","Both, within 24 hours"],1,"Accident = always, 10 days. Deviation = on request."],
+["A crash causes $480 to repair a mailbox worth $900. Must you report?",["Yes, the value exceeds $500","No, the lower number ($480) is under $500","Yes, any damage counts"],1,"Use the lower of repair or value."],
+["A Category 2 drone may make a sustained flight over an open-air crowd only if it:",["Has a VO","Is Remote ID compliant","Stays under 50 ft"],1,"Categories 1, 2, 4 need Remote ID for that."],
+["To fly at 200 ft AGL in Class C you need ___; to fly BVLOS in Class G you need ___:",["Authorization / waiver","Waiver / authorization","Nothing / nothing"],0,"Airspace = authorization; rule = waiver."],
+["An aircraft reports 'left base, Runway 36.' It is:",["South of the airport, flying east","North of the airport, flying west","South of the airport, flying west"],0,"Landing north, approach from the south. Left traffic is on the west side; base flies toward the centerline: east."],
+["A pilot says 'Part 107 rules don't apply to my little drone.' This attitude is:",["Anti-authority","Resignation","Macho"],0,"Antidote: follow the rules."],
+["A black sign with a yellow letter tells you:",["Which taxiway or runway you are on","Where to turn","To stop"],0,"Location sign."],
+["White arrows leading to a runway threshold mean:",["Closed runway","Displaced threshold: taxi and takeoff OK, no landing touchdown","Blast pad"],1,"Displaced threshold."],
+["Which product warns of thunderstorms?",["METAR","Convective SIGMET","Chart Supplement"],1,"Convective SIGMET."],
+["You complete recurrent training October 5, 2026. You're current through:",["October 5, 2028","October 31, 2028","October 31, 2027"],1,"24 calendar months, end of month."],
+["Class A airspace begins at:",["14,500 ft MSL","18,000 ft MSL","10,000 ft MSL"],1,"14,500 is where Class E begins in uncharted areas."]
+];
+const Q=Q0.slice();for(let i=Q.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[Q[i],Q[j]]=[Q[j],Q[i]];}
+const qs=document.getElementById("qs");
+Q.forEach((q,i)=>{const d=document.createElement("div");d.className="qb";d.id="b"+i;
+d.innerHTML='<p class="qt"><span class="qn">'+(i+1)+'.</span>'+q[0]+'</p>'+q[1].map((o,j)=>'<label><input type="radio" name="q'+i+'" value="'+j+'"><span>'+"ABC"[j]+". "+o+'</span></label>').join("")+'<p class="ex" id="e'+i+'"></p>';
+qs.appendChild(d);});
+const t0=Date.now();let done=false;const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+const tick=setInterval(()=>{if(!done)document.getElementById("clk").textContent=fmt(Math.round((Date.now()-t0)/1000));},1000);
+qs.addEventListener("change",()=>{document.getElementById("err").textContent="";});
+document.getElementById("grade").onclick=()=>{
+if(done)return;
+const ans=Q.map((q,i)=>{const c=document.querySelector('input[name="q'+i+'"]:checked');return c?+c.value:null;});
+const left=ans.filter(a=>a===null).length;
+if(left){document.getElementById("err").textContent="Answer all questions first ("+left+" left)";const f=ans.indexOf(null);document.getElementById("b"+f).classList.add("miss");document.getElementById("b"+f).scrollIntoView({behavior:"smooth",block:"center"});return;}
+done=true;clearInterval(tick);const secs=Math.round((Date.now()-t0)/1000);let right=0;const missed=[];
+Q.forEach((q,i)=>{const ok=ans[i]===q[2];const b=document.getElementById("b"+i);b.classList.remove("miss");b.classList.add(ok?"ok":"bad");
+document.querySelectorAll('input[name="q'+i+'"]').forEach(x=>x.disabled=true);
+if(ok)right++;else{missed.push(i);const e=document.getElementById("e"+i);e.style.display="block";e.innerHTML="Your answer: "+"ABC"[ans[i]]+". "+q[1][ans[i]]+"<br>Correct: "+"ABC"[q[2]]+". "+q[1][q[2]]+"<br>"+q[3];}});
+const pct=Math.round(100*right/Q.length);
+const text="Hardest 40: "+right+"/40 ("+pct+"%) in "+fmt(secs)+". My misses:\n"+missed.map(i=>"#"+(i+1)+": "+Q[i][0]+" | I answered: "+Q[i][1][ans[i]]+" | Correct: "+Q[i][1][Q[i][2]]).join("\n");
+document.getElementById("res").innerHTML='<div class="stats"><div class="stat">Score<b>'+right+' / 40</b></div><div class="stat">Percent<b>'+pct+'%</b></div><div class="stat">Time<b>'+fmt(secs)+'</b></div></div>'+
+(missed.length?'<p><button id="copy">Copy my misses</button> then paste them to Claude.</p><textarea id="ta" readonly></textarea>':'<p>Perfect score.</p>');
+const ta=document.getElementById("ta");if(ta){ta.value=text;document.getElementById("copy").onclick=()=>{ta.select();try{navigator.clipboard.writeText(text).then(()=>{document.getElementById("copy").textContent="Copied ✓";}).catch(()=>{document.execCommand("copy");document.getElementById("copy").textContent="Copied ✓";});}catch(e){document.execCommand("copy");}};}
+document.getElementById("res").scrollIntoView({behavior:"smooth"});
+};
+</script>
+</body>
+</html>
