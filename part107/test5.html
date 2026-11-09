@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Part 107 · FAA-style mock (60)</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1b1d22;--muted:#646a73;--line:#e2e0d9;--good:#1e8a4c;--bad:#c0392b;--accent:#1f5fbf}
+@media (prefers-color-scheme:dark){:root{--bg:#121417;--card:#1b1e23;--ink:#e9eaec;--muted:#9aa1ab;--line:#2b3038;--accent:#6ea3ff}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px 14px 80px}
+h1{font-size:1.3rem;margin:.2rem 0}
+.sub{color:var(--muted);font-size:.9rem;margin:0 0 12px}
+.clock{position:sticky;top:0;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px;font-size:.95rem;z-index:2}
+.qb{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:0 0 12px}
+.qb.ok{border-color:var(--good)}.qb.bad{border-color:var(--bad)}.qb.miss{border-color:#c98a0b}
+.qt{margin:0 0 8px}.qn{color:var(--muted);font-size:.85rem;margin-right:6px}
+label{display:flex;gap:8px;align-items:flex-start;padding:5px 0;cursor:pointer}
+label input{margin-top:5px}
+.ex{font-size:.9rem;margin:8px 0 0;display:none}
+button{font:inherit;padding:12px 18px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.sec{background:none;color:var(--accent)}
+#err{color:var(--bad);font-size:.9rem;margin-left:8px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.stat b{display:block;font-size:1.4rem}
+textarea{width:100%;min-height:160px;font:13px/1.4 ui-monospace,monospace;margin-top:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px;box-sizing:border-box}
+</style>
+</head>
+<body>
+<main>
+<h1>Part 107 · FAA-style mock (60)</h1>
+<p class="sub">Written in FAA test wording. Questions marked FIGURE 23 use the Savannah sectional excerpt (the screenshot you sent, or Figure 23 in the testing supplement). Take at least 45 minutes and do a second pass before grading. <a href="./">Back to study site</a></p>
+<div class="clock">⏱ Time elapsed: <b id="clk">0:00</b> of 2:00:00</div>
+<div id="qs"></div>
+<p><button id="grade">Grade my test</button><span id="err"></span></p>
+<div id="res"></div>
+</main>
+<script>
+const Q0=[
+["(Refer to FIGURE 23, area 1.) What is the height above ground level of the obstruction charted just east of area 1?",["428 feet AGL","549 feet AGL","121 feet AGL"],0,"549 is MSL (bold); (428) is AGL."],
+["(Refer to FIGURE 23, area 1.) What is the approximate elevation of the terrain at the base of the obstruction charted just east of area 1?",["428 feet MSL","121 feet MSL","977 feet MSL"],1,"549 minus 428."],
+["(Refer to FIGURE 23, area 3.) What is the floor of the Savannah Class C airspace at the shelf area (outer circle)?",["1,300 feet AGL","1,300 feet MSL","4,100 feet MSL"],1,"41/13: floor 1,300 MSL."],
+["(Refer to FIGURE 23, area 3.) What is the ceiling of the Savannah Class C airspace?",["4,100 feet MSL","4,100 feet AGL","1,300 feet MSL"],0,"Top number 41 = 4,100 MSL."],
+["(Refer to FIGURE 23, area 3.) The note 'See NOTAMs/Directory for Class C eff hrs' indicates that",["the Class C airspace is in effect only during certain hours listed in the Chart Supplement and NOTAMs","drone operations are prohibited","the Class C airspace is permanently closed"],0,"Part-time Class C; check the Chart Supplement (Directory)."],
+["(Refer to FIGURE 23.) What is the CTAF for Statesboro-Bulloch County Airport (TBR)?",["119.025 MHz","122.8 MHz","123.0 MHz"],1,"119.025 is AWOS-3; 122.8 has the circled C."],
+["(Refer to FIGURE 23.) What is the length of the longest runway at Statesboro-Bulloch County Airport (TBR)?",["1,870 feet","6,000 feet","600 feet"],1,"187 = elevation; 60 = 6,000 ft."],
+["(Refer to FIGURE 23.) The airport data for Plantation Airport (JYL) includes 'RP 5,15'. This indicates",["right traffic patterns for Runways 5 and 15","runways 5 and 15 are closed","pilot controlled lighting on Runways 5 and 15"],0,"RP = right pattern."],
+["(Refer to FIGURE 23.) The Bulldog C MOA note states it excludes airspace 1,500 feet AGL and below. A small UA operating at 400 feet AGL beneath it is",["inside the Bulldog C MOA","below the Bulldog C MOA","required to obtain a waiver"],1,"The MOA begins above 1,500 ft AGL there."],
+["(Refer to FIGURE 23, area 2.) The data 'SOUTHERN AG (Pvt) 180 - 20' indicates a private airport with an elevation of 180 feet and",["a 2,000 foot runway","a CTAF of 120.0","a 200 foot runway"],0,"Private airports show elevation and runway length in hundreds."],
+["(Refer to FIGURE 23.) The Savannah airport data shows 'CT 119.1' followed by a star and a circled C. When the tower is closed, a remote pilot should monitor",["123.75 MHz","119.1 MHz","122.9 MHz"],1,"Star = part-time tower; circled C = CTAF on 119.1. 123.75 is ATIS."],
+["According to 14 CFR part 107, the responsibility to inspect the small UAS to ensure it is in a safe operating condition rests with the",["remote pilot in command","owner of the small UAS","visual observer"],0,"14 CFR 107.15 and 107.49."],
+["According to 14 CFR part 107, how may a remote pilot operate an unmanned aircraft in Class C airspace?",["The remote pilot must have prior authorization from the Air Traffic Control (ATC) facility having jurisdiction over that airspace","The remote pilot must monitor the CTAF","The remote pilot must notify the airport operator"],0,"FAA sample wording."],
+["According to 14 CFR part 107, what is required to operate a small UA within 30 minutes after official sunset?",["Use of anti-collision lights visible for at least 3 statute miles","Use of a transponder","A waiver"],0,"Civil twilight rule."],
+["Under what condition would a small UA not have to be registered before it is operated in the United States?",["When the aircraft weighs less than .55 pounds on takeoff, including everything that is on board or attached to the aircraft","When the aircraft has a takeoff weight under 2 pounds","When it is operated only in Class G airspace"],0,"FAA sample answer. (Under Part 107 specifically, register every drone.)"],
+["According to 14 CFR part 107, the remote pilot in command must report an accident to the FAA within 10 days if it results in",["any damage to the small UA","serious injury to any person or any loss of consciousness","damage to property of $300 or more"],1,"Or property damage over $500 other than the UA."],
+["According to 14 CFR part 107, in the event of an in-flight emergency, the remote pilot in command is",["allowed to deviate from any rule of part 107 to the extent necessary to respond to that emergency","required to land immediately","required to report the deviation within 10 days"],0,"Report only upon FAA request."],
+["According to 14 CFR part 107, a person may not act as a remote pilot in command unless that person has completed initial or recurrent aeronautical knowledge training within the previous",["12 calendar months","24 calendar months","36 calendar months"],1,"14 CFR 107.65."],
+["According to 14 CFR part 107, the holder of a remote pilot certificate who has made a change in permanent mailing address may not exercise the privileges of the certificate after",["30 days from the date of the move unless the FAA has been notified","60 days from the date of the move","the next recurrent training"],0,"14 CFR 107.77."],
+["According to 14 CFR part 107, no person may act as a crewmember of a small UAS within",["4 hours after consuming any alcoholic beverage","8 hours after consuming any alcoholic beverage","12 hours after consuming any alcoholic beverage"],1,"Also blood alcohol under 0.04."],
+["According to 14 CFR part 107, no person may act as a crewmember of a small UAS while having an alcohol concentration of",["0.02 or greater","0.04 or greater","0.08 or greater"],1,"0.04 or greater is prohibited."],
+["According to 14 CFR part 107, visual line of sight must be maintained with vision that is",["unaided by any device other than corrective lenses","aided by binoculars if needed","provided by a first-person-view camera"],0,"14 CFR 107.31."],
+["According to 14 CFR part 107, a person may operate a small UA from a moving land or water-borne vehicle only if",["the small UA is flown over a sparsely populated area","a visual observer is aboard","the vehicle is traveling under 30 mph"],0,"And not carrying others' property for compensation."],
+["According to 14 CFR part 107, the carriage of hazardous material by a small UA is",["permitted with a waiver","prohibited","permitted under 5 pounds"],1,"14 CFR 107.36."],
+["According to 14 CFR part 107, a small UA must yield the right of way to",["all aircraft, airborne vehicles, and launch and reentry vehicles","only aircraft in distress","only aircraft in the traffic pattern"],0,"14 CFR 107.37."],
+["To conduct Category 1 operations over people, a small UA must",["weigh 0.55 pounds or less including everything on board, and have no exposed rotating parts that would lacerate human skin","have an FAA-accepted declaration of compliance","have an airworthiness certificate"],0,"Category 1."],
+["To conduct Category 4 operations over people, a small UA must",["weigh less than 0.55 pounds","have an airworthiness certificate issued under part 21","have propeller guards"],1,"Category 4."],
+["A remote pilot operating a small UA equipped with a remote identification broadcast module must",["maintain visual line of sight at all times","fly only within a FRIA","fly only in Class G airspace"],0,"Part 89."],
+["According to 14 CFR part 107, operating a small UAS with an ATC transponder on is",["required in Class B airspace","prohibited unless otherwise authorized by the Administrator","required at night"],1,"14 CFR 107.52."],
+["Which of the following provisions of 14 CFR part 107 may NOT be waived?",["Operation from a moving vehicle","Carriage of hazardous materials","Operation over people"],1,"Hazmat isn't on the waivable list."],
+["According to 14 CFR part 107, to operate in an active restricted area, the remote pilot must have",["permission from the using or controlling agency","a certificate of waiver","nothing additional"],0,"14 CFR 107.45."],
+["What is the purpose of a Military Operations Area (MOA)?",["To separate certain military training activities from IFR traffic","To prohibit all civil aircraft","To identify areas of high pilot training"],0,"VFR pilots, including drones, may enter with caution."],
+["Alert Areas are areas that",["contain a high volume of pilot training or unusual aerial activity","prohibit flight","require ATC authorization"],0,"Use extra caution."],
+["One of the purposes for issuing a Temporary Flight Restriction (TFR) is to",["announce parachute jump areas","protect public figures","identify airport advisory areas"],1,"FAA sample wording."],
+["Time-critical information on airports and changes that affect the National Airspace System are provided by",["Notices to Air Missions (NOTAMs)","the Chart Supplement","Advisory Circulars"],0,"FAA sample wording."],
+["Information concerning parachute jumping sites may be found in the",["NOTAMs","Chart Supplement","Pilot's Operating Handbook"],1,"FAA sample: Chart Supplement."],
+["According to 14 CFR part 107, operating in a Class E surface area designated for an airport requires",["no authorization below 400 feet","prior authorization from ATC","a waiver"],1,"Surface E is controlled at the ground."],
+["Class A airspace begins at",["14,500 feet MSL","18,000 feet MSL","10,000 feet MSL"],1,"Class E ends just below."],
+["What is the definition of ceiling?",["The height above ground of the lowest layer of clouds reported as broken or overcast, or the vertical visibility into an obscuration","The height of the lowest cloud layer of any type","The height of the highest cloud layer"],0,"FEW and SCT never count."],
+["(Refer to METAR: KINK 121845Z 11012G18KT 15SM SKC 25/17 A3000.) The wind conditions are",["calm","110 degrees true at 12 knots, gusts to 18 knots","110 degrees magnetic at 18 knots"],1,"Written reports are true."],
+["(Refer to METAR: KMDW 121856Z 32005KT 1 1/2SM RA OVC007 17/16 A2980.) The ceiling and visibility are",["700 feet, 1 1/2 statute miles","7,000 feet, 1 1/2 statute miles","700 feet, 15 statute miles"],0,"OVC007 = 700 ft AGL."],
+["(Refer to TAF: FM1600 18015G25KT 3SM -SHRA BKN020.) Beginning at 1600Z the forecast calls for",["wind 180 degrees true at 15 knots gusting 25, visibility 3 SM, light rain showers, ceiling 2,000 feet","a 30 percent chance of rain","wind 180 magnetic at 25 knots"],0,"FM = from that time."],
+["What are characteristics of a moist, unstable air mass?",["Turbulence and showery precipitation","Poor visibility and smooth air","Haze and smoke"],0,"FAA sample wording."],
+["What are characteristics of stable air?",["Good visibility and steady precipitation","Poor visibility and steady precipitation","Poor visibility and intermittent precipitation"],1,"FAA sample wording."],
+["Which feature is associated with the cumulus stage of a thunderstorm?",["Continuous updrafts","Precipitation beginning at the surface","Predominantly downdrafts"],0,"Mature = rain at surface; dissipating = downdrafts."],
+["What effect does high density altitude have on the efficiency of a UA propeller?",["Propeller efficiency is increased","Propeller efficiency is decreased","Density altitude does not affect propeller efficiency"],1,"FAA sample wording."],
+["Advection fog is most likely to form when",["moist air moves over colder ground or water","the ground cools on a clear, calm night","moist air is lifted up a slope"],0,"Coastal fog."],
+["If a small UA weighs 33 pounds, what approximate weight would the small UA structure be required to support during a 30 degree banked turn while maintaining altitude?",["34 pounds","38 pounds","47 pounds"],1,"33 x 1.154."],
+["When operating a small UA in a 60 degree level banked turn, the load factor is",["1.41 G","2 G","3 G"],1,"1 divided by cos 60."],
+["The stalling of an unmanned aircraft wing is caused by",["exceeding the critical angle of attack","flying below a specific airspeed","excessive weight only"],0,"Angle, not speed."],
+["Which is the correct antidote to the hazardous attitude of impulsivity?",["Follow the rules. They are usually right.","Not so fast. Think first.","It could happen to me."],1,"Impulsivity = do it quickly."],
+["A remote pilot who frequently thinks 'What's the use?' is displaying which hazardous attitude?",["Invulnerability","Resignation","Anti-authority"],1,"Antidote: I'm not helpless."],
+["Safety is an important element for a remote pilot to consider prior to operating an unmanned aircraft system. To prevent the final link in the accident chain, a remote pilot must consider which methodology?",["Crew Resource Management","Safety Management System","Risk Management"],0,"FAA sample: CRM."],
+["What is the most effective way to use the eyes during night operations?",["Look only at far away, dim lights","Scan slowly to permit off-center viewing","Concentrate directly on each object for a few seconds"],1,"Off-center viewing."],
+["How long does it take for the eyes to fully adapt to darkness?",["About 5 minutes","About 30 minutes","About 2 hours"],1,"About 30 minutes."],
+["Which statement is true regarding alcohol in the human system?",["Small amounts of alcohol in the human system increase judgment","Small amounts of alcohol in the human system impair judgment","Coffee helps metabolize alcohol"],1,"FAA sample wording."],
+["According to 14 CFR part 107, if the manufacturer does not provide a maintenance schedule, the operator should",["establish a scheduled maintenance protocol","perform maintenance only after damage","request a schedule from the FAA"],0,"FAA sample wording."],
+["Where can a remote pilot find the performance and limitations of a specific small UA?",["The Pilot's Operating Handbook or UAS Flight Manual","The Chart Supplement","14 CFR part 107"],0,"Manufacturer documentation."],
+["While monitoring the CTAF, you hear an aircraft announce 'midfield right downwind, Runway 31.' Where is the aircraft relative to the runway?",["Northeast","Southwest","Northwest"],0,"Face northwest; right is northeast."],
+["The ATIS broadcast states 'wind two four zero at eight.' The wind direction is referenced to",["true north","magnetic north","grid north"],1,"Spoken = magnetic."]
+];
+const Q=Q0.slice();for(let i=Q.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[Q[i],Q[j]]=[Q[j],Q[i]];}
+const qs=document.getElementById("qs");
+Q.forEach((q,i)=>{const d=document.createElement("div");d.className="qb";d.id="b"+i;
+d.innerHTML='<p class="qt"><span class="qn">'+(i+1)+'.</span>'+q[0]+'</p>'+q[1].map((o,j)=>'<label><input type="radio" name="q'+i+'" value="'+j+'"><span>'+"ABC"[j]+". "+o+'</span></label>').join("")+'<p class="ex" id="e'+i+'"></p>';
+qs.appendChild(d);});
+const t0=Date.now();let done=false;const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+const tick=setInterval(()=>{if(!done)document.getElementById("clk").textContent=fmt(Math.round((Date.now()-t0)/1000));},1000);
+qs.addEventListener("change",()=>{document.getElementById("err").textContent="";});
+document.getElementById("grade").onclick=()=>{
+if(done)return;
+const ans=Q.map((q,i)=>{const c=document.querySelector('input[name="q'+i+'"]:checked');return c?+c.value:null;});
+const left=ans.filter(a=>a===null).length;
+if(left){document.getElementById("err").textContent="Answer all questions first ("+left+" left)";const f=ans.indexOf(null);document.getElementById("b"+f).classList.add("miss");document.getElementById("b"+f).scrollIntoView({behavior:"smooth",block:"center"});return;}
+done=true;clearInterval(tick);const secs=Math.round((Date.now()-t0)/1000);let right=0;const missed=[];
+Q.forEach((q,i)=>{const ok=ans[i]===q[2];const b=document.getElementById("b"+i);b.classList.remove("miss");b.classList.add(ok?"ok":"bad");
+document.querySelectorAll('input[name="q'+i+'"]').forEach(x=>x.disabled=true);
+if(ok)right++;else{missed.push(i);const e=document.getElementById("e"+i);e.style.display="block";e.innerHTML="Your answer: "+"ABC"[ans[i]]+". "+q[1][ans[i]]+"<br>Correct: "+"ABC"[q[2]]+". "+q[1][q[2]]+"<br>"+q[3];}});
+const pct=Math.round(100*right/Q.length);
+const text="FAA-style 60: "+right+"/60 ("+pct+"%) in "+fmt(secs)+". My misses:\n"+missed.map(i=>"#"+(i+1)+": "+Q[i][0]+" | I answered: "+Q[i][1][ans[i]]+" | Correct: "+Q[i][1][Q[i][2]]).join("\n");
+document.getElementById("res").innerHTML='<div class="stats"><div class="stat">Score<b>'+right+' / 60</b></div><div class="stat">Percent<b>'+pct+'%</b></div><div class="stat">Time<b>'+fmt(secs)+'</b></div></div>'+
+(secs<2700?'<p style="color:#c0392b"><b>You finished in '+fmt(secs)+'.</b> On the real test, use at least 45 minutes: reread each question and do a second pass.</p>':'')+(missed.length?'<p><button id="copy">Copy my misses</button> then paste them to Claude.</p><textarea id="ta" readonly></textarea>':'<p>Perfect score.</p>');
+const ta=document.getElementById("ta");if(ta){ta.value=text;document.getElementById("copy").onclick=()=>{ta.select();try{navigator.clipboard.writeText(text).then(()=>{document.getElementById("copy").textContent="Copied ✓";}).catch(()=>{document.execCommand("copy");document.getElementById("copy").textContent="Copied ✓";});}catch(e){document.execCommand("copy");}};}
+document.getElementById("res").scrollIntoView({behavior:"smooth"});
+};
+</script>
+</body>
+</html>
