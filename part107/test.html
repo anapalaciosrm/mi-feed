@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Part 107 · 60 new hard questions</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1b1d22;--muted:#646a73;--line:#e2e0d9;--good:#1e8a4c;--bad:#c0392b;--accent:#1f5fbf}
+@media (prefers-color-scheme:dark){:root{--bg:#121417;--card:#1b1e23;--ink:#e9eaec;--muted:#9aa1ab;--line:#2b3038;--accent:#6ea3ff}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px 14px 80px}
+h1{font-size:1.3rem;margin:.2rem 0}
+.sub{color:var(--muted);font-size:.9rem;margin:0 0 12px}
+.clock{position:sticky;top:0;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px;font-size:.95rem;z-index:2}
+.qb{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:0 0 12px}
+.qb.ok{border-color:var(--good)}.qb.bad{border-color:var(--bad)}.qb.miss{border-color:#c98a0b}
+.qt{margin:0 0 8px}.qn{color:var(--muted);font-size:.85rem;margin-right:6px}
+label{display:flex;gap:8px;align-items:flex-start;padding:5px 0;cursor:pointer}
+label input{margin-top:5px}
+.ex{font-size:.9rem;margin:8px 0 0;display:none}
+button{font:inherit;padding:12px 18px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.sec{background:none;color:var(--accent)}
+#err{color:var(--bad);font-size:.9rem;margin-left:8px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.stat b{display:block;font-size:1.4rem}
+textarea{width:100%;min-height:160px;font:13px/1.4 ui-monospace,monospace;margin-top:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px;box-sizing:border-box}
+</style>
+</head>
+<body>
+<main>
+<h1>Part 107 · 60 new hard questions</h1>
+<p class="sub">From 14 CFR 107 and the Remote Pilot ACS. Take at least 45 minutes and do a second pass before grading. <a href="./">Back to study site</a></p>
+<div class="clock">⏱ Time elapsed: <b id="clk">0:00</b> of 2:00:00</div>
+<div id="qs"></div>
+<p><button id="grade">Grade my test</button><span id="err"></span></p>
+<div id="res"></div>
+</main>
+<script>
+const Q0=[
+["Under Part 107, operating a small UAS with ADS-B Out in transmit mode is:",["Required in Class B airspace","Prohibited unless authorized by the FAA","Allowed above 400 ft AGL"],1,"14 CFR 107.53."],
+["Under Part 107, operating a small UAS with an ATC transponder turned on is:",["Prohibited unless authorized by the FAA","Required within 5 miles of an airport","Optional"],0,"14 CFR 107.52."],
+["A 'small unmanned aircraft system' includes:",["Only the aircraft","The aircraft plus its control station, communication links and other elements needed to operate it","The aircraft and payload only"],1,"Part 107 definition of small UAS."],
+["Making a false statement on a Part 107 application can lead to:",["A warning letter only","Denial, suspension or revocation of the certificate","A higher registration fee"],1,"14 CFR 107.5."],
+["Near an airport, Part 107 specifically prohibits operating a small UA in a way that:",["Interferes with operations and traffic patterns at the airport","Comes within 5 miles of any runway","Is visible from the tower"],0,"14 CFR 107.43. There is no blanket 5 mile rule under Part 107."],
+["To fly in an ACTIVE Restricted Area, you need permission from:",["The nearest control tower","The using or controlling agency","Any FAA office"],1,"14 CFR 107.45."],
+["A National Security Area (NSA) on a sectional means:",["Flight is always prohibited","Pilots are asked to voluntarily avoid it, and it can become temporarily prohibited by NOTAM","Only military aircraft may enter"],1,"NSAs are voluntary avoidance areas unless a NOTAM prohibits flight."],
+["A Terminal Radar Service Area (TRSA) shown by gray lines means, for a drone pilot:",["The TRSA itself requires no authorization; the underlying airspace rules apply","A waiver is always required","Flight is prohibited"],0,"TRSA participation is voluntary; follow the rules of the underlying class of airspace."],
+["An Airport Advisory Area extends about:",["10 SM from an airport with an FSS but no operating tower","5 NM from any airport","30 NM from Class B airports"],0,"AIM: Airport Advisory Area = 10 statute miles."],
+["An airport rotating beacon flashing white and green identifies:",["A lighted civilian land airport","A military airport","A heliport"],0,"White/green = civilian land airport."],
+["During daylight at an airport in Class D airspace, the rotating beacon is turned on. This may mean:",["Ceiling is below 1,000 ft or visibility below 3 SM","The airport is closed","The tower just opened"],0,"Daytime beacon in surface areas often indicates below VFR minimums."],
+["On a sectional, a rotating beacon (sunset to sunrise) is shown by:",["A star at the top of the airport symbol","A star after the tower frequency","The letter L"],0,"Star on the symbol = beacon. Star after CT frequency = part-time tower."],
+["In airport data, a star after the CT frequency (CT 118.3 ★) means:",["Rotating beacon","The tower operates part time","Pilot controlled lighting"],1,"Part-time tower; see the Chart Supplement for hours."],
+["In airport data, an asterisk before the L (*L) means:",["Lighting limitations exist; check the Chart Supplement","Lights are always on","No lighting"],0,"*L = lighting limitations."],
+["Airport data shows 'RP 23'. This means:",["Right traffic pattern for Runway 23","Restricted parking near Runway 23","Runway 23 is paved"],0,"RP = right pattern for that runway."],
+["The standard way for manned aircraft to enter the traffic pattern at a non-towered airport is:",["45 degrees to the downwind leg at midfield","Straight-in on final","From the upwind end on crosswind"],0,"Expect traffic entering on a 45 to midfield downwind."],
+["A sign with a red background and white letters at an airport is a:",["Mandatory instruction sign","Location sign","Direction sign"],0,"Red/white = mandatory, such as runway holding positions."],
+["A location sign (telling you which taxiway or runway you are on) has:",["A red background with white letters","A black background with yellow letters","A yellow background with black letters"],1,"Black/yellow = location. Yellow/black = direction."],
+["White arrows leading to a runway threshold bar mark a displaced threshold. That area may be used for:",["Taxi and takeoff, but not landing touchdown","Landing only","Nothing"],0,"Displaced threshold: no touchdown in the arrow area."],
+["Yellow chevrons on the pavement before a runway end mark an area:",["Not usable for taxi, takeoff or landing","Used for displaced landings","Used for holding"],0,"Blast pad or stopway."],
+["On the radio, 1430Z is spoken as:",["Fourteen thirty Zulu","One four three zero","Two thirty PM"],1,"Times and headings are spoken digit by digit."],
+["On the radio, heading 270 is spoken as:",["Two seven zero","Two seventy","Twenty-seven"],0,"Digit by digit."],
+["Victor airways are Class E airspace beginning at:",["700 ft AGL","1,200 ft AGL","The surface"],1,"Victor airways: 1,200 ft AGL up to but not including 18,000 MSL."],
+["A Maximum Elevation Figure printed as a big 2 with a small 8 means:",["2,800 ft MSL","2,800 ft AGL","280 ft MSL"],0,"MEF is in thousands and hundreds of feet MSL."],
+["On a sectional, the small tick marks along latitude and longitude lines each represent:",["1 minute","1 degree","10 minutes"],0,"60 minutes = 1 degree."],
+["Under stress you start breathing fast and feel lightheaded with tingling fingers. This is likely:",["Hypoxia","Hyperventilation","Dehydration"],1,"Fix: slow your breathing, talk aloud or breathe into a bag."],
+["Which best prevents dehydration on a long, hot field day?",["Drinking water regularly, even before you feel thirsty","Drinking coffee to stay alert","Waiting until thirsty, then drinking a lot"],0,"Thirst is a late signal."],
+["Heatstroke is best described as:",["The body's inability to control its temperature","Mild sunburn","Low blood sugar"],0,"Prevent with water, shade and breaks."],
+["Your drone is far away at dusk and you can't tell which way it's facing. To avoid spatial disorientation you should:",["Bring it closer and use orientation cues like lights and the app's heading indicator","Climb higher","Turn the lights off"],0,"Keep it close enough to see orientation."],
+["Long-term stress from ongoing life problems is called:",["Acute stress","Chronic stress","Situational stress"],1,"Chronic stress builds up and may need professional help."],
+["You keep flying a job as winds pick up because you 'have to finish today.' This hazard is called:",["Get-there-itis (plan continuation)","Crew resource management","Situational awareness"],0,"Often driven by external pressures."],
+["On a risk matrix, a hazard that is PROBABLE with CATASTROPHIC severity is:",["Low risk","High risk; do not proceed until mitigated","Medium risk; proceed normally"],1,"Likely plus catastrophic = high risk."],
+["In the 3P model, 'Process' means:",["Spot the hazards","Evaluate how the hazards affect the flight","Carry out the best action"],1,"Perceive, Process, Perform."],
+["Most small drones use which radio frequencies for control and video?",["2.4 GHz and 5.8 GHz","121.5 MHz","118 to 137 MHz"],0,"Common unlicensed bands."],
+["Flying close to large steel structures and power lines can interfere with:",["The compass and the control link","Only the camera","Nothing"],0,"Metal and EM fields affect the magnetometer and signal."],
+["Flying on a cold winter morning, you should expect batteries to:",["Have reduced capacity; keep them warm before flight","Last longer","Charge faster in flight"],0,"Cold reduces battery performance."],
+["Which weather product warns pilots about thunderstorms?",["Convective SIGMET","METAR remarks only","The Chart Supplement"],0,"Convective SIGMETs cover thunderstorms and related hazards."],
+["Structural icing requires:",["Visible moisture and temperatures at or below freezing","Clear skies and cold air","Temperatures above 10 C"],0,"Ice needs liquid water and freezing temperatures."],
+["Fog that forms when cold air moves over warmer water is:",["Steam fog","Radiation fog","Upslope fog"],0,"Common over lakes in fall and winter."],
+["Moist, stable air moving up a slope and cooling forms:",["Advection fog","Upslope fog","Steam fog"],1,"Upslope fog."],
+["Wind shear can occur:",["Only near the ground","Only near thunderstorms","At any altitude"],2,"Wind shear can occur at any level."],
+["A typical microburst lasts about:",["15 minutes","2 hours","1 minute"],0,"Usually about 15 minutes, under 1 mile wide."],
+["Convective (thermal) turbulence is strongest:",["On sunny afternoons over bare ground or pavement","On calm, clear nights","Over cold water at dawn"],0,"Uneven surface heating causes thermals."],
+["A cool morning turns into a hot afternoon at the same field. Density altitude:",["Decreases; performance improves","Increases; performance decreases","Stays the same"],1,"Hotter air = higher density altitude."],
+["Dewpoint is:",["The temperature at which air becomes saturated when cooled","The temperature at the surface","The freezing level"],0,"Saturation point."],
+["Frost on the propellers should be:",["Removed before flight; it reduces lift and increases drag","Ignored; it melts in flight","Polished smooth"],0,"Always remove frost."],
+["Mounting a heavy camera far forward on the drone moves the center of gravity:",["Aft","Forward","Nowhere"],1,"CG moves toward the added weight."],
+["At high density altitude, a multirotor's hover endurance is usually:",["Shorter","Longer","Unchanged"],0,"Motors work harder in thin air."],
+["In straight-and-level, unaccelerated flight, the load factor is:",["0 G","1 G","2 G"],1,"Baseline 1 G."],
+["In a 45 degree bank, stall speed increases by about:",["19 percent","41 percent","100 percent"],0,"Square root of 1.41 is about 1.19."],
+["When you add a Remote ID broadcast module, its serial number must be:",["Listed in the registration of the drone it's used on","Engraved on the controller","Reported only after an accident"],0,"Module serial numbers are tied to the registration."],
+["A Standard Remote ID drone fails its Remote ID self-test before flight. It should:",["Not take off","Take off and fly within VLOS","Fly only in Class G"],0,"Standard RID drones are designed not to take off if RID isn't working."],
+["The rule against careless or reckless operation (107.23):",["Can be waived","Cannot be waived","Can be waived at night only"],1,"It isn't on the 107.205 waivable list."],
+["Refusing a law enforcement alcohol test can be grounds for denying a Part 107 application for up to:",["30 days","1 year","5 years"],1,"14 CFR 107.59."],
+["A remote pilot who no longer wants their certificate may:",["Voluntarily surrender it to the FAA in writing","Let it expire after 24 months","Transfer it to someone else"],0,"14 CFR 107.79. Certificates don't expire or transfer."],
+["After a legal name change, to update your certificate you must:",["Apply to the FAA with your certificate and legal documentation of the change","Write the new name on the card","Do nothing; names don't matter"],0,"14 CFR 107.77."],
+["A private pilot with a current flight review wants a Remote Pilot Certificate. They can:",["Complete the FAA's online training course and apply instead of taking the knowledge test","Fly under Part 107 with no certificate","Use their pilot certificate as is"],0,"Part 61 pilots with a current flight review may use the online course."],
+["Before each flight, which is a required preflight action under 107.49?",["Ensure the drone has enough power to complete the intended operation","File a flight plan","Notify the nearest airport by phone"],0,"Power, control link, crew briefing, environment, secure objects."],
+["Under 107.49, before flight the RPIC must make sure all persons directly participating know:",["Operating conditions, emergency procedures, contingencies, roles, and hazards","Only their roles","Nothing; briefing is optional"],0,"Crew briefing is required."],
+["The remote PIC must ensure the small UAS will pose no undue hazard if:",["The control link is lost","The weather improves","The battery is fully charged"],0,"107.19: plan for lost link and other failures."]
+];
+const Q=Q0.slice();for(let i=Q.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[Q[i],Q[j]]=[Q[j],Q[i]];}
+const qs=document.getElementById("qs");
+Q.forEach((q,i)=>{const d=document.createElement("div");d.className="qb";d.id="b"+i;
+d.innerHTML='<p class="qt"><span class="qn">'+(i+1)+'.</span>'+q[0]+'</p>'+q[1].map((o,j)=>'<label><input type="radio" name="q'+i+'" value="'+j+'"><span>'+"ABC"[j]+". "+o+'</span></label>').join("")+'<p class="ex" id="e'+i+'"></p>';
+qs.appendChild(d);});
+const t0=Date.now();let done=false;const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+const tick=setInterval(()=>{if(!done)document.getElementById("clk").textContent=fmt(Math.round((Date.now()-t0)/1000));},1000);
+qs.addEventListener("change",()=>{document.getElementById("err").textContent="";});
+document.getElementById("grade").onclick=()=>{
+if(done)return;
+const ans=Q.map((q,i)=>{const c=document.querySelector('input[name="q'+i+'"]:checked');return c?+c.value:null;});
+const left=ans.filter(a=>a===null).length;
+if(left){document.getElementById("err").textContent="Answer all questions first ("+left+" left)";const f=ans.indexOf(null);document.getElementById("b"+f).classList.add("miss");document.getElementById("b"+f).scrollIntoView({behavior:"smooth",block:"center"});return;}
+done=true;clearInterval(tick);const secs=Math.round((Date.now()-t0)/1000);let right=0;const missed=[];
+Q.forEach((q,i)=>{const ok=ans[i]===q[2];const b=document.getElementById("b"+i);b.classList.remove("miss");b.classList.add(ok?"ok":"bad");
+document.querySelectorAll('input[name="q'+i+'"]').forEach(x=>x.disabled=true);
+if(ok)right++;else{missed.push(i);const e=document.getElementById("e"+i);e.style.display="block";e.innerHTML="Your answer: "+"ABC"[ans[i]]+". "+q[1][ans[i]]+"<br>Correct: "+"ABC"[q[2]]+". "+q[1][q[2]]+"<br>"+q[3];}});
+const pct=Math.round(100*right/Q.length);
+const text="Unseen official 60: "+right+"/60 ("+pct+"%) in "+fmt(secs)+". My misses:\n"+missed.map(i=>"#"+(i+1)+": "+Q[i][0]+" | I answered: "+Q[i][1][ans[i]]+" | Correct: "+Q[i][1][Q[i][2]]).join("\n");
+document.getElementById("res").innerHTML='<div class="stats"><div class="stat">Score<b>'+right+' / 60</b></div><div class="stat">Percent<b>'+pct+'%</b></div><div class="stat">Time<b>'+fmt(secs)+'</b></div></div>'+
+(missed.length?'<p><button id="copy">Copy my misses</button> then paste them to Claude.</p><textarea id="ta" readonly></textarea>':'<p>Perfect score.</p>');
+const ta=document.getElementById("ta");if(ta){ta.value=text;document.getElementById("copy").onclick=()=>{ta.select();try{navigator.clipboard.writeText(text).then(()=>{document.getElementById("copy").textContent="Copied ✓";}).catch(()=>{document.execCommand("copy");document.getElementById("copy").textContent="Copied ✓";});}catch(e){document.execCommand("copy");}};}
+document.getElementById("res").scrollIntoView({behavior:"smooth"});
+};
+</script>
+</body>
+</html>
