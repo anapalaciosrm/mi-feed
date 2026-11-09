@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Part 107 · Airspace heights + review (40)</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1b1d22;--muted:#646a73;--line:#e2e0d9;--good:#1e8a4c;--bad:#c0392b;--accent:#1f5fbf}
+@media (prefers-color-scheme:dark){:root{--bg:#121417;--card:#1b1e23;--ink:#e9eaec;--muted:#9aa1ab;--line:#2b3038;--accent:#6ea3ff}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px 14px 80px}
+h1{font-size:1.3rem;margin:.2rem 0}
+.sub{color:var(--muted);font-size:.9rem;margin:0 0 12px}
+.clock{position:sticky;top:0;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px;font-size:.95rem;z-index:2}
+.qb{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:0 0 12px}
+.qb.ok{border-color:var(--good)}.qb.bad{border-color:var(--bad)}.qb.miss{border-color:#c98a0b}
+.qt{margin:0 0 8px}.qn{color:var(--muted);font-size:.85rem;margin-right:6px}
+label{display:flex;gap:8px;align-items:flex-start;padding:5px 0;cursor:pointer}
+label input{margin-top:5px}
+.ex{font-size:.9rem;margin:8px 0 0;display:none}
+button{font:inherit;padding:12px 18px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.sec{background:none;color:var(--accent)}
+#err{color:var(--bad);font-size:.9rem;margin-left:8px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.stat b{display:block;font-size:1.4rem}
+textarea{width:100%;min-height:160px;font:13px/1.4 ui-monospace,monospace;margin-top:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px;box-sizing:border-box}
+</style>
+</head>
+<body>
+<main>
+<h1>Part 107 · Airspace heights + review (40)</h1>
+<p class="sub">From 14 CFR 107 and the Remote Pilot ACS. Take at least 45 minutes and do a second pass before grading. <a href="./">Back to study site</a></p>
+<div class="clock">⏱ Time elapsed: <b id="clk">0:00</b> of 2:00:00</div>
+<div id="qs"></div>
+<p><button id="grade">Grade my test</button><span id="err"></span></p>
+<div id="res"></div>
+</main>
+<script>
+const Q0=[
+["Class D airspace usually extends from the surface up to about:",["1,200 ft above the airport","2,500 ft above the airport","4,000 ft above the airport"],1,"D = 2,500."],
+["Class C airspace usually extends up to about:",["2,500 ft above the airport","4,000 ft above the airport","10,000 ft MSL"],1,"C = 4,000 above the airport."],
+["Class B airspace usually extends from the surface up to:",["4,000 ft above the airport","10,000 ft MSL","18,000 ft MSL"],1,"B = 10,000 MSL."],
+["Class A airspace begins at:",["10,000 ft MSL","14,500 ft MSL","18,000 ft MSL"],2,"A = 18,000 MSL."],
+["The floor of a Class C outer shelf is usually about:",["700 ft AGL","1,200 ft above the airport","2,500 ft above the airport"],1,"Shelf floor ~1,200 above the airport."],
+["The inner core of Class C usually has a radius of:",["2 NM","5 NM","10 NM"],1,"Core 5 NM, shelf to 10 NM."],
+["The outer shelf of Class C usually extends to a radius of:",["5 NM","10 NM","30 NM"],1,"10 NM."],
+["Where there are no airspace markings at all, Class G extends up to:",["700 ft AGL","1,200 ft AGL","14,500 ft MSL"],2,"Class E begins at 14,500 MSL."],
+["Inside a magenta vignette, Class G extends up to:",["700 ft AGL","1,200 ft AGL","The surface"],0,"Magenta = 700."],
+["Inside a blue vignette, Class G extends up to:",["700 ft AGL","1,200 ft AGL","2,500 ft AGL"],1,"Blue = 1,200."],
+["Victor airways are Class E beginning at:",["The surface","700 ft AGL","1,200 ft AGL"],2,"1,200 AGL, 4 NM each side."],
+["From lowest typical top to highest, the order is:",["D, C, B","C, D, B","B, C, D"],0,"D 2,500, C 4,000, B 10,000."],
+["A Class D airport sits at 300 ft MSL. Its Class D ceiling would most likely be charted as:",["[25]","[28]","[33]"],1,"2,500 above 300 = 2,800 MSL = [28]."],
+["A Class C airport sits at 100 ft MSL. The top of its Class C would most likely be charted as:",["40","41","51"],1,"4,000 above 100 = 4,100 MSL = 41."],
+["A Class C airport sits at 100 ft MSL. Its shelf floor would most likely be charted as:",["12","13","22"],1,"1,200 above 100 = 1,300 MSL = 13."],
+["A Class D box shows [32]. The airport elevation is 700 ft MSL. How high above the airport does the Class D reach?",["3,200 ft","2,500 ft","700 ft"],1,"3,200 minus 700 = 2,500 above the airport."],
+["A Class C core is labeled 48/SFC. The airport elevation is 800 ft MSL. The Class C top is how high above the airport?",["4,800 ft","4,000 ft","800 ft"],1,"4,800 minus 800."],
+["A Class B core label reads 100/SFC. This means:",["Surface to 10,000 ft MSL","Surface to 100 ft AGL","100 ft to the surface"],0,"Hundreds of feet MSL; SFC = ground."],
+["A Class B shelf label reads 100/40. Its floor is:",["400 ft AGL","4,000 ft MSL","10,000 ft MSL"],1,"Bottom number = floor, MSL."],
+["Under a Class B shelf labeled 100/40, the ground is 500 ft MSL and you fly at 400 ft AGL. You are:",["Inside Class B","Below the Class B shelf","In Class A"],1,"500 + 400 = 900 MSL, far below 4,000."],
+["Class E airspace extends up to:",["14,500 ft MSL","18,000 ft MSL, not including 18,000","10,000 ft MSL"],1,"Class A starts at 18,000."],
+["At 300 ft AGL, which location requires ATC authorization?",["Under a blue vignette","Inside Class D","Under a magenta vignette"],1,"Vignette areas are Class G at 300 ft."],
+["A Class D box shows [-30]. The Class D extends up to:",["3,000 ft AGL","But not including 3,000 ft MSL","3,000 ft MSL including that altitude"],1,"Minus = not including."],
+["Inside a magenta vignette, ground 1,300 ft MSL, drone at 350 ft AGL. You are in:",["Class E","Class G","Class D"],1,"350 AGL is below 700 AGL."],
+["A Class C shelf is labeled 40/16. Ground 1,250 ft MSL, drone at 400 ft AGL. You are:",["Below the shelf","Inside Class C","In Class G at 1,250"],1,"1,250 + 400 = 1,650 MSL, above 1,600."],
+["ATIS reports 'wind 160 at 8.' That direction is:",["True","Magnetic","Toward 160"],1,"Spoken = magnetic."],
+["A TAF forecasts 16008KT. That direction is:",["True","Magnetic","Toward 160"],0,"Written = true."],
+["Six hours after one drink, blood alcohol 0.00%. Can you fly?",["Yes","No","Yes with a VO"],1,"8 hours AND under 0.04%."],
+["A 24 lb drone in a level 60 degree bank must support about:",["28 lb","34 lb","48 lb"],2,"24 x 2."],
+["After an emergency deviation, a written report is sent:",["Within 10 days","Upon FAA request","Within 24 hours"],1,"Emergency = they ask."],
+["Standard temperature at 5,000 ft is about:",["10 C","5 C","0 C"],1,"15 minus 10."],
+["An obstacle is charted 1430 (560). At 300 ft AGL beside it, your altitude is:",["1,730 ft MSL","1,170 ft MSL","860 ft MSL"],1,"Ground 870, plus 300."],
+["A Category 3 drone over film crew directly participating is:",["Allowed","Never allowed","Allowed only with Remote ID"],0,"Participants OK; crowds never."],
+["To fly at 425 ft AGL in Class G away from structures you need:",["ATC authorization","A waiver","Nothing"],1,"Rule = waiver."],
+["An aircraft reports 'right downwind, Runway 31.' It is:",["Northeast of the runway, flying southeast","Southwest of the runway, flying southeast","Northeast of the runway, flying northwest"],0,"Face northwest; right is northeast; downwind flies southeast."],
+["METAR: FEW005 SCT010 OVC018. The ceiling is:",["500 ft","1,000 ft","1,800 ft"],2,"First BKN or OVC."],
+["A red sign with white letters at an airport is a:",["Location sign","Mandatory instruction sign","Direction sign"],1,"Red = STOP."],
+["Flying in an active MOA requires:",["A waiver","Permission from the military","No permission, but extreme caution"],2,"MOAs aren't prohibited."],
+["Operating a Part 107 drone with its transponder on is:",["Prohibited unless authorized","Required near airports","Optional"],0,"14 CFR 107.52."],
+["A typical microburst lasts about:",["1 minute","15 minutes","1 hour"],1,"About 15 minutes."]
+];
+const Q=Q0.slice();for(let i=Q.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[Q[i],Q[j]]=[Q[j],Q[i]];}
+const qs=document.getElementById("qs");
+Q.forEach((q,i)=>{const d=document.createElement("div");d.className="qb";d.id="b"+i;
+d.innerHTML='<p class="qt"><span class="qn">'+(i+1)+'.</span>'+q[0]+'</p>'+q[1].map((o,j)=>'<label><input type="radio" name="q'+i+'" value="'+j+'"><span>'+"ABC"[j]+". "+o+'</span></label>').join("")+'<p class="ex" id="e'+i+'"></p>';
+qs.appendChild(d);});
+const t0=Date.now();let done=false;const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+const tick=setInterval(()=>{if(!done)document.getElementById("clk").textContent=fmt(Math.round((Date.now()-t0)/1000));},1000);
+qs.addEventListener("change",()=>{document.getElementById("err").textContent="";});
+document.getElementById("grade").onclick=()=>{
+if(done)return;
+const ans=Q.map((q,i)=>{const c=document.querySelector('input[name="q'+i+'"]:checked');return c?+c.value:null;});
+const left=ans.filter(a=>a===null).length;
+if(left){document.getElementById("err").textContent="Answer all questions first ("+left+" left)";const f=ans.indexOf(null);document.getElementById("b"+f).classList.add("miss");document.getElementById("b"+f).scrollIntoView({behavior:"smooth",block:"center"});return;}
+done=true;clearInterval(tick);const secs=Math.round((Date.now()-t0)/1000);let right=0;const missed=[];
+Q.forEach((q,i)=>{const ok=ans[i]===q[2];const b=document.getElementById("b"+i);b.classList.remove("miss");b.classList.add(ok?"ok":"bad");
+document.querySelectorAll('input[name="q'+i+'"]').forEach(x=>x.disabled=true);
+if(ok)right++;else{missed.push(i);const e=document.getElementById("e"+i);e.style.display="block";e.innerHTML="Your answer: "+"ABC"[ans[i]]+". "+q[1][ans[i]]+"<br>Correct: "+"ABC"[q[2]]+". "+q[1][q[2]]+"<br>"+q[3];}});
+const pct=Math.round(100*right/Q.length);
+const text="Heights 40: "+right+"/40 ("+pct+"%) in "+fmt(secs)+". My misses:\n"+missed.map(i=>"#"+(i+1)+": "+Q[i][0]+" | I answered: "+Q[i][1][ans[i]]+" | Correct: "+Q[i][1][Q[i][2]]).join("\n");
+document.getElementById("res").innerHTML='<div class="stats"><div class="stat">Score<b>'+right+' / 40</b></div><div class="stat">Percent<b>'+pct+'%</b></div><div class="stat">Time<b>'+fmt(secs)+'</b></div></div>'+
+(missed.length?'<p><button id="copy">Copy my misses</button> then paste them to Claude.</p><textarea id="ta" readonly></textarea>':'<p>Perfect score.</p>');
+const ta=document.getElementById("ta");if(ta){ta.value=text;document.getElementById("copy").onclick=()=>{ta.select();try{navigator.clipboard.writeText(text).then(()=>{document.getElementById("copy").textContent="Copied ✓";}).catch(()=>{document.execCommand("copy");document.getElementById("copy").textContent="Copied ✓";});}catch(e){document.execCommand("copy");}};}
+document.getElementById("res").scrollIntoView({behavior:"smooth"});
+};
+</script>
+</body>
+</html>
