@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Part 107 · 60 weak spots + dimensions</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1b1d22;--muted:#646a73;--line:#e2e0d9;--good:#1e8a4c;--bad:#c0392b;--accent:#1f5fbf}
+@media (prefers-color-scheme:dark){:root{--bg:#121417;--card:#1b1e23;--ink:#e9eaec;--muted:#9aa1ab;--line:#2b3038;--accent:#6ea3ff}}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:760px;margin:0 auto;padding:16px 14px 80px}
+h1{font-size:1.3rem;margin:.2rem 0}
+.sub{color:var(--muted);font-size:.9rem;margin:0 0 12px}
+.clock{position:sticky;top:0;background:var(--bg);padding:8px 0;border-bottom:1px solid var(--line);margin-bottom:12px;font-size:.95rem;z-index:2}
+.qb{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:0 0 12px}
+.qb.ok{border-color:var(--good)}.qb.bad{border-color:var(--bad)}.qb.miss{border-color:#c98a0b}
+.qt{margin:0 0 8px}.qn{color:var(--muted);font-size:.85rem;margin-right:6px}
+label{display:flex;gap:8px;align-items:flex-start;padding:5px 0;cursor:pointer}
+label input{margin-top:5px}
+.ex{font-size:.9rem;margin:8px 0 0;display:none}
+button{font:inherit;padding:12px 18px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
+button.sec{background:none;color:var(--accent)}
+#err{color:var(--bad);font-size:.9rem;margin-left:8px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.stat b{display:block;font-size:1.4rem}
+textarea{width:100%;min-height:160px;font:13px/1.4 ui-monospace,monospace;margin-top:8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px;box-sizing:border-box}
+</style>
+</head>
+<body>
+<main>
+<h1>Part 107 · 60 weak spots + dimensions</h1>
+<p class="sub">From 14 CFR 107 and the Remote Pilot ACS. Take at least 45 minutes and do a second pass before grading. <a href="./">Back to study site</a></p>
+<div class="clock">⏱ Time elapsed: <b id="clk">0:00</b> of 2:00:00</div>
+<div id="qs"></div>
+<p><button id="grade">Grade my test</button><span id="err"></span></p>
+<div id="res"></div>
+</main>
+<script>
+const Q0=[
+["A Class C inner core (surface area) usually has a radius of about:",["5 NM","10 NM","20 NM"],0,"Class C core: 5 NM, from the surface up to about 4,000 ft above the airport."],
+["A Class C outer shelf usually extends to a radius of about:",["5 NM","10 NM","30 NM"],1,"Shelf: 5 to 10 NM."],
+["A Class C outer shelf usually begins about:",["At the surface","1,200 ft above the airport elevation","700 ft AGL"],1,"The chart shows the exact floor in MSL."],
+["Class C airspace usually extends up to about:",["2,500 ft above the airport","4,000 ft above the airport","10,000 ft MSL"],1,"Class D about 2,500; Class C about 4,000; Class B about 10,000 MSL."],
+["Class D airspace usually extends from the surface up to about:",["1,200 ft AGL","2,500 ft above the airport elevation","4,000 ft above the airport elevation"],1,"Charted ceiling in a box, in MSL."],
+["Class B airspace usually extends from the surface up to:",["4,000 ft above the airport","10,000 ft MSL","18,000 ft MSL"],1,"Upside-down wedding cake."],
+["Class A airspace begins at:",["14,500 ft MSL","18,000 ft MSL","10,000 ft MSL"],1,"18,000 MSL to FL600."],
+["The Mode C veil around a Class B airport extends:",["10 NM","20 NM","30 NM"],2,"30 NM."],
+["A Victor airway is Class E airspace extending how far on each side of its centerline?",["2 NM","4 NM","10 NM"],1,"4 NM each side, from 1,200 ft AGL."],
+["Under Part 107, cloud clearance in Class G compared to Class C is:",["Smaller in Class G","Larger in Class C","The same everywhere: 500 ft below, 2,000 ft horizontal"],2,"Part 107 uses one rule in all airspace."],
+["Inside a magenta vignette where the ground is 1,100 ft MSL, Class E begins at:",["700 ft MSL","1,800 ft MSL","1,100 ft MSL"],1,"700 AGL + 1,100 = 1,800 MSL."],
+["Inside a blue vignette, ground 650 ft MSL, drone at 400 ft AGL. You are in:",["Class E","Class G","Class D"],1,"Both AGL: 400 is below 1,200, so Class G."],
+["A Class C shelf is labeled 40/14. Ground 1,050 ft MSL, drone at 380 ft AGL. You are:",["Below the shelf","Inside Class C","In Class G"],1,"1,050 + 380 = 1,430 MSL, above 1,400."],
+["A Class B shelf is labeled 60/35. Ground 3,100 ft MSL, drone at 380 ft AGL. You are:",["Inside Class B","Below the shelf","In Class A"],1,"3,100 + 380 = 3,480 MSL, below 3,500."],
+["An obstacle is charted 1987 (812). The ground elevation is:",["812 ft MSL","1,175 ft MSL","2,799 ft MSL"],1,"1,987 minus 812."],
+["An obstacle is charted 1987 (812). At 250 ft AGL beside it, your altitude is:",["2,237 ft MSL","1,425 ft MSL","1,062 ft MSL"],1,"Ground first: 1,175. Then + 250."],
+["An obstacle is charted 1987 (812). Within 400 ft of it, Part 107 lets you fly up to:",["1,212 ft AGL","2,387 ft AGL","400 ft AGL"],0,"Use the AGL height: 812 + 400."],
+["A Class D starts at SFC with a ceiling of [30]. At 30 ft AGL you need:",["Nothing below 400 ft","ATC authorization","A waiver"],1,"SFC = ground. Authorization at any height."],
+["Standard temperature at 8,000 ft is about:",["7 C","-1 C","-9 C"],1,"15 minus 16 = -1 C."],
+["Standard temperature at 2,500 ft is about:",["10 C","12.5 C","5 C"],0,"15 minus 5 = 10 C."],
+["ATIS says 'wind 340 at 6.' That direction is:",["True","Magnetic","Toward 340"],1,"Spoken = magnetic."],
+["A METAR shows 34006KT. That direction is:",["True","Magnetic","Toward 340"],0,"Written = true, and FROM."],
+["Seven and a half hours after one drink, your blood alcohol is 0.000%. Can you fly?",["Yes","No, 8 hours have not passed","Yes, with a VO"],1,"8 hours AND under 0.04%."],
+["A 26 lb drone in a level 60 degree bank must support about:",["30 lb","37 lb","52 lb"],2,"26 x 2."],
+["A 20 lb drone in a level 30 degree bank must support about:",["20 lb","23 lb","40 lb"],1,"20 x 1.15."],
+["In straight-and-level flight, load factor is:",["0 G","1 G","2 G"],1,"Normal gravity."],
+["After an emergency deviation from Part 107, a written report goes to the FAA:",["Within 10 days","Upon FAA request","Within 48 hours"],1,"Emergency = they ask. Accident = you tell."],
+["A Category 3 drone flies over people directly participating in the operation. This is:",["Allowed","Never allowed","Allowed only with Remote ID"],0,"Participants are fine; crowds never."],
+["A Category 3 drone over a public outdoor concert is:",["Allowed with Remote ID","Never allowed","Allowed below 100 ft"],1,"Never over open-air assemblies."],
+["From a moving car on an empty rural road, you deliver a client's package for pay. This is:",["Legal","Illegal","Legal with a VO"],1,"No carrying others' property for pay from a moving vehicle."],
+["From a moving boat over open water, you take photos for a paying client. This is:",["Legal","Illegal","Legal only with a waiver"],0,"Sparsely populated, no property carried."],
+["To fly at 100 ft AGL in a Class E surface area you need:",["Nothing","ATC authorization","A waiver"],1,"Airspace = authorization."],
+["To fly at 430 ft AGL in Class G, away from structures, you need:",["ATC authorization","A waiver","Nothing"],1,"Rule = waiver."],
+["To fly at night in Class G with proper lights and current training, you need:",["A night waiver","ATC authorization","Neither"],2,"No waiver, no authorization."],
+["An aircraft reports 'right base, Runway 9.' It is:",["West of the airport, flying north","East of the airport, flying south","West of the airport, flying south"],0,"Landing east, approach from the west. Right traffic is on the south side; base flies toward the centerline, so north."],
+["An aircraft reports 'left downwind, Runway 4.' It is:",["Northwest of the runway, flying southwest","Southeast of the runway, flying southwest","Northwest of the runway, flying northeast"],0,"Face northeast; left is northwest; downwind flies opposite: southwest."],
+["Flying in an active MOA is:",["Prohibited","Allowed with extreme caution","Allowed only with a waiver"],1,"MOAs are not prohibited."],
+["To enter an ACTIVE Restricted Area, you need permission from:",["Any FAA office","The using or controlling agency","The nearest tower"],1,"14 CFR 107.45."],
+["A National Security Area means pilots:",["Are prohibited at all times","Are asked to voluntarily avoid it; it can become prohibited by NOTAM","Need a waiver"],1,"Voluntary unless a NOTAM says otherwise."],
+["A TRSA (gray lines) changes your drone requirements how?",["Always requires a waiver","It doesn't; follow the underlying airspace rules","Flight is prohibited"],1,"TRSA participation is voluntary."],
+["An Airport Advisory Area extends about:",["10 SM from an airport with an FSS but no operating tower","5 NM from all airports","30 NM from Class B"],0,"10 SM."],
+["A red sign with white letters reading '22-4' is a:",["Mandatory instruction sign","Location sign","Direction sign"],0,"Red = STOP."],
+["A black sign with yellow letter 'B' and a yellow border is a:",["Direction sign","Location sign","Mandatory sign"],1,"Black = where you ARE."],
+["A yellow sign with black letters and an arrow is a:",["Direction sign","Location sign","Mandatory sign"],0,"Yellow = where to GO."],
+["Yellow chevrons before a runway end mark an area that is:",["Usable for takeoff only","Not usable for taxi, takeoff or landing","A holding area"],1,"Blast pad or stopway."],
+["White arrows before a runway threshold bar mean:",["Taxi and takeoff OK, no landing touchdown","Closed","Landing only"],0,"Displaced threshold."],
+["A large yellow X on a runway means the runway is:",["Closed","For helicopters only","Displaced"],0,"Closed."],
+["Operating a Part 107 drone with its transponder on is:",["Required near airports","Prohibited unless authorized by the FAA","Optional"],1,"14 CFR 107.52."],
+["Operating a Part 107 drone with ADS-B Out transmitting is:",["Prohibited unless authorized by the FAA","Required in Class B","Allowed above 400 ft"],0,"14 CFR 107.53."],
+["Refusing a law enforcement alcohol test can lead to denial of a Part 107 application for up to:",["30 days","1 year","5 years"],1,"14 CFR 107.59."],
+["A Remote Pilot Certificate:",["Expires after 24 months","Never expires but can be voluntarily surrendered in writing","Must be renewed every year"],1,"Recurrent training keeps privileges current."],
+["A microburst usually lasts about:",["1 minute","15 minutes","2 hours"],1,"About 15 minutes, under 1 mile wide."],
+["Which product warns of thunderstorms?",["Convective SIGMET","METAR","Chart Supplement"],0,"Convective SIGMET."],
+["Airport data reads 1150 L 38 122.7. The longest runway is:",["1,150 ft","3,800 ft","380 ft"],1,"Hundreds of feet."],
+["METAR: FEW007 SCT012 BKN026. The ceiling is:",["700 ft","1,200 ft","2,600 ft"],2,"First BKN or OVC."],
+["METAR: BKN010. Considering cloud clearance AND Part 107 limits, the highest you can fly is:",["500 ft AGL","400 ft AGL","1,000 ft AGL"],1,"1,000 minus 500 = 500, but Part 107 caps you at 400."],
+["The antidote to invulnerability is:",["It could happen to me","Not so fast","Follow the rules"],0,"Invulnerability = it won't happen to me."],
+["For a remote pilot, 'see and avoid' is done mainly by:",["The camera feed","Visual line of sight and yielding to manned aircraft","Obstacle sensors"],1,"Unaided eyes and yielding."],
+["A part-time Class D tower closes and the airspace becomes Class G. At 200 ft AGL you need:",["ATC authorization","Nothing","A waiver"],1,"Class G needs no authorization. If it becomes Class E surface, you would."],
+["A Standard Remote ID drone fails its Remote ID self-test before flight. It should:",["Not take off","Take off and stay in VLOS","Fly only in Class G"],0,"Standard RID drones shouldn't take off if RID isn't working."]
+];
+const Q=Q0.slice();for(let i=Q.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[Q[i],Q[j]]=[Q[j],Q[i]];}
+const qs=document.getElementById("qs");
+Q.forEach((q,i)=>{const d=document.createElement("div");d.className="qb";d.id="b"+i;
+d.innerHTML='<p class="qt"><span class="qn">'+(i+1)+'.</span>'+q[0]+'</p>'+q[1].map((o,j)=>'<label><input type="radio" name="q'+i+'" value="'+j+'"><span>'+"ABC"[j]+". "+o+'</span></label>').join("")+'<p class="ex" id="e'+i+'"></p>';
+qs.appendChild(d);});
+const t0=Date.now();let done=false;const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+const tick=setInterval(()=>{if(!done)document.getElementById("clk").textContent=fmt(Math.round((Date.now()-t0)/1000));},1000);
+qs.addEventListener("change",()=>{document.getElementById("err").textContent="";});
+document.getElementById("grade").onclick=()=>{
+if(done)return;
+const ans=Q.map((q,i)=>{const c=document.querySelector('input[name="q'+i+'"]:checked');return c?+c.value:null;});
+const left=ans.filter(a=>a===null).length;
+if(left){document.getElementById("err").textContent="Answer all questions first ("+left+" left)";const f=ans.indexOf(null);document.getElementById("b"+f).classList.add("miss");document.getElementById("b"+f).scrollIntoView({behavior:"smooth",block:"center"});return;}
+done=true;clearInterval(tick);const secs=Math.round((Date.now()-t0)/1000);let right=0;const missed=[];
+Q.forEach((q,i)=>{const ok=ans[i]===q[2];const b=document.getElementById("b"+i);b.classList.remove("miss");b.classList.add(ok?"ok":"bad");
+document.querySelectorAll('input[name="q'+i+'"]').forEach(x=>x.disabled=true);
+if(ok)right++;else{missed.push(i);const e=document.getElementById("e"+i);e.style.display="block";e.innerHTML="Your answer: "+"ABC"[ans[i]]+". "+q[1][ans[i]]+"<br>Correct: "+"ABC"[q[2]]+". "+q[1][q[2]]+"<br>"+q[3];}});
+const pct=Math.round(100*right/Q.length);
+const text="Weak spots 60: "+right+"/60 ("+pct+"%) in "+fmt(secs)+". My misses:\n"+missed.map(i=>"#"+(i+1)+": "+Q[i][0]+" | I answered: "+Q[i][1][ans[i]]+" | Correct: "+Q[i][1][Q[i][2]]).join("\n");
+document.getElementById("res").innerHTML='<div class="stats"><div class="stat">Score<b>'+right+' / 60</b></div><div class="stat">Percent<b>'+pct+'%</b></div><div class="stat">Time<b>'+fmt(secs)+'</b></div></div>'+
+(missed.length?'<p><button id="copy">Copy my misses</button> then paste them to Claude.</p><textarea id="ta" readonly></textarea>':'<p>Perfect score.</p>');
+const ta=document.getElementById("ta");if(ta){ta.value=text;document.getElementById("copy").onclick=()=>{ta.select();try{navigator.clipboard.writeText(text).then(()=>{document.getElementById("copy").textContent="Copied ✓";}).catch(()=>{document.execCommand("copy");document.getElementById("copy").textContent="Copied ✓";});}catch(e){document.execCommand("copy");}};}
+document.getElementById("res").scrollIntoView({behavior:"smooth"});
+};
+</script>
+</body>
+</html>
